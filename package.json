@@ -13,10 +13,18 @@
     "db:push": "cd server && npx prisma db push",
     "db:studio": "cd server && npx prisma studio"
   },
-  "keywords": ["martial-arts", "member-management", "react", "typescript"],
+  "keywords": [
+    "martial-arts",
+    "member-management",
+    "react",
+    "typescript"
+  ],
   "author": "Your Name",
   "license": "MIT",
   "devDependencies": {
     "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "@auth0/auth0-react": "^2.3.0"
   }
-} 
+}

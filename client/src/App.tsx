@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Auth0Provider } from '@auth0/auth0-react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Navbar from './components/Navbar';
 import LandingPage from './components/LandingPage';
@@ -15,17 +16,17 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode; adminOnly?: boolean 
   children, 
   adminOnly = false 
 }) => {
-  const { user, loading } = useAuth();
+  const { user, loading, isAuthenticated } = useAuth();
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     );
   }
 
-  if (!user) {
+  if (!isAuthenticated || !user) {
     return <Navigate to="/login" replace />;
   }
 
@@ -38,8 +39,6 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode; adminOnly?: boolean 
 
 // Main App Layout
 const AppLayout: React.FC = () => {
-  const { user } = useAuth();
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
@@ -75,20 +74,30 @@ const AppLayout: React.FC = () => {
 // Main App component
 const App: React.FC = () => {
   return (
-    <AuthProvider>
-      <Router>
-        <Routes>
-          {/* Root redirect */}
-          <Route path="/" element={<HomeRedirect />} />
-          
-          {/* Landing page route - no authentication required */}
-          <Route path="/landing" element={<LandingPage />} />
-          
-          {/* App routes - with authentication */}
-          <Route path="/*" element={<AppLayout />} />
-        </Routes>
-      </Router>
-    </AuthProvider>
+    <Auth0Provider
+      domain={process.env.REACT_APP_AUTH0_DOMAIN || ''}
+      clientId={process.env.REACT_APP_AUTH0_CLIENT_ID || ''}
+      authorizationParams={{
+        redirect_uri: window.location.origin,
+        audience: process.env.REACT_APP_AUTH0_AUDIENCE,
+        scope: "openid profile email"
+      }}
+    >
+      <AuthProvider>
+        <Router>
+          <Routes>
+            {/* Root redirect */}
+            <Route path="/" element={<HomeRedirect />} />
+            
+            {/* Landing page route - no authentication required */}
+            <Route path="/landing" element={<LandingPage />} />
+            
+            {/* App routes - with authentication */}
+            <Route path="/*" element={<AppLayout />} />
+          </Routes>
+        </Router>
+      </AuthProvider>
+    </Auth0Provider>
   );
 };
 

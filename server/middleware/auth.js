@@ -1,21 +1,23 @@
-const jwt = require('jsonwebtoken');
+const { auth } = require('express-oauth2-jwt-bearer');
 
-const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+// Auth0 middleware configuration
+const checkJwt = auth({
+  audience: process.env.AUTH0_AUDIENCE,
+  issuerBaseURL: process.env.AUTH0_ISSUER_BASE_URL,
+  tokenSigningAlg: 'RS256'
+});
 
-  if (!token) {
-    return res.status(401).json({ error: 'Access token required' });
+// Middleware to extract user info from Auth0 token
+const extractUser = (req, res, next) => {
+  if (req.auth && req.auth.payload) {
+    req.user = {
+      id: req.auth.payload.sub,
+      email: req.auth.payload['https://membo.com/email'] || req.auth.payload.email,
+      name: req.auth.payload['https://membo.com/name'] || req.auth.payload.name,
+      role: req.auth.payload['https://membo.com/roles'] || 'member'
+    };
   }
-
-  jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key', (err, user) => {
-    if (err) {
-      return res.status(403).json({ error: 'Invalid or expired token' });
-    }
-    
-    req.user = user;
-    next();
-  });
+  next();
 };
 
-module.exports = authenticateToken; 
+module.exports = { checkJwt, extractUser }; 
