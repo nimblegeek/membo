@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  role      String   // "member" | "admin"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  bookings Booking[]
+  awards   Award[]
+
+  @@map("users")
+}
+
+model Class {
+  id       String   @id @default(uuid())
+  name     String
+  date     DateTime
+  time     String
+  maxSlots Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  bookings Booking[]
+
+  @@map("classes")
+}
+
+model Booking {
+  id     String @id @default(uuid())
+  userId String
+  classId String
+  status String // "booked" | "attended" | "canceled"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  class Class @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  @@map("bookings")
+}
+
+model Award {
+  id    String @id @default(uuid())
+  userId String
+  month String // e.g., "2025-06"
+  title String // e.g., "Member of the Month"
+  createdAt DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("awards")
+}
+
+model Setting {
+  id        String @id @default("1")
+  mode      String // "standalone" | "integrated"
+  apiConfig String // JSON string for API configuration
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("settings")
+} 
