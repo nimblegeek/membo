@@ -4,6 +4,7 @@ import {
   CheckCircle, XCircle, Clock, BarChart3 
 } from 'lucide-react';
 import axios from 'axios';
+import MemberManagement from './MemberManagement';
 
 interface DashboardStats {
   totalMembers: number;
@@ -179,6 +180,7 @@ const AdminDashboard: React.FC = () => {
         <nav className="-mb-px flex space-x-8">
           {[
             { id: 'overview', name: 'Overview', icon: BarChart3 },
+            { id: 'members', name: 'Members', icon: Users },
             { id: 'users', name: 'Users', icon: Users },
             { id: 'classes', name: 'Classes', icon: Calendar },
             { id: 'settings', name: 'Settings', icon: Settings }
@@ -249,13 +251,17 @@ const AdminDashboard: React.FC = () => {
           </div>
         )}
 
+        {activeTab === 'members' && (
+          <MemberManagement />
+        )}
+
         {activeTab === 'users' && (
           <div className="card">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-gray-900">Members</h3>
+              <h3 className="text-lg font-semibold text-gray-900">Users</h3>
               <button className="btn btn-primary flex items-center">
                 <Plus className="w-4 h-4 mr-2" />
-                Add Member
+                Add User
               </button>
             </div>
             
@@ -264,7 +270,7 @@ const AdminDashboard: React.FC = () => {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Member
+                      User
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Role

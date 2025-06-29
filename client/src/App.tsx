@@ -75,11 +75,11 @@ const AppLayout: React.FC = () => {
 const App: React.FC = () => {
   return (
     <Auth0Provider
-      domain={process.env.REACT_APP_AUTH0_DOMAIN || ''}
-      clientId={process.env.REACT_APP_AUTH0_CLIENT_ID || ''}
+      domain={process.env.REACT_APP_AUTH0_DOMAIN || 'dev.membo.com'}
+      clientId={process.env.REACT_APP_AUTH0_CLIENT_ID || 'dev-client-id'}
       authorizationParams={{
         redirect_uri: window.location.origin,
-        audience: process.env.REACT_APP_AUTH0_AUDIENCE,
+        audience: process.env.REACT_APP_AUTH0_AUDIENCE || 'https://dev.membo.com',
         scope: "openid profile email"
       }}
     >
@@ -87,7 +87,7 @@ const App: React.FC = () => {
         <Router>
           <Routes>
             {/* Root redirect */}
-            <Route path="/" element={<HomeRedirect />} />
+            <Route path="/" element={<Navigate to="/admin" replace />} />
             
             {/* Landing page route - no authentication required */}
             <Route path="/landing" element={<LandingPage />} />

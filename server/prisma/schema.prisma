@@ -14,7 +14,11 @@ model User {
   id        String   @id @default(uuid())
   name      String
   email     String   @unique
+  phone     String?  // Optional phone number
   role      String   // "member" | "admin"
+  beltLevel String?  // "White", "Yellow", "Orange", "Green", "Blue", "Purple", "Brown", "Black"
+  status    String   @default("active") // "active" | "inactive" | "suspended"
+  joinDate  DateTime @default(now())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

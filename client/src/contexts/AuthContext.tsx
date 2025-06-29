@@ -41,35 +41,36 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     getAccessTokenSilently
   } = useAuth0();
 
-  // Transform Auth0 user to our User interface
-  const user: User | null = auth0User ? {
-    id: auth0User.sub || '',
-    name: auth0User.name || '',
-    email: auth0User.email || '',
-    role: ((auth0User['https://membo.com/roles'] as string) || 'member') as 'member' | 'admin'
-  } : null;
+  // TEMPORARY: Mock admin user for development (bypass Auth0)
+  const mockUser: User = {
+    id: 'dev-admin-1',
+    name: 'Coach Admin',
+    email: 'coach@membo.com',
+    role: 'admin'
+  };
+
+  // Use mock user for development
+  const user = mockUser;
+  const isAuthenticatedDev = true;
+  const loading = false;
 
   const login = () => {
-    loginWithRedirect({
-      appState: { returnTo: window.location.pathname }
-    });
+    // Mock login - just redirect to dashboard
+    window.location.href = '/admin';
   };
 
   const logout = () => {
-    auth0Logout({
-      logoutParams: {
-        returnTo: window.location.origin
-      }
-    });
+    // Mock logout - redirect to landing
+    window.location.href = '/landing';
   };
 
   const value: AuthContextType = {
     user,
-    loading: isLoading,
+    loading,
     login,
     logout,
-    token: null, // We'll get this when needed
-    isAuthenticated
+    token: 'mock-token-for-development',
+    isAuthenticated: isAuthenticatedDev
   };
 
   return (
