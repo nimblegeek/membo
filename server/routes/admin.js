@@ -113,7 +113,7 @@ router.get('/users', async (req, res) => {
 // Create a new user
 router.post('/users', async (req, res) => {
   try {
-    const { name, email, role } = req.body;
+    const { name, email, phone, role, beltLevel, status } = req.body;
 
     if (!name || !email || !role) {
       return res.status(400).json({ error: 'Name, email, and role are required' });
@@ -136,7 +136,10 @@ router.post('/users', async (req, res) => {
       data: {
         name,
         email,
-        role
+        phone: phone || null,
+        role,
+        beltLevel: beltLevel || 'White',
+        status: status || 'active'
       }
     });
 
@@ -151,7 +154,7 @@ router.post('/users', async (req, res) => {
 router.put('/users/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, email, role } = req.body;
+    const { name, email, phone, role, beltLevel, status } = req.body;
 
     if (!name || !email || !role) {
       return res.status(400).json({ error: 'Name, email, and role are required' });
@@ -178,7 +181,10 @@ router.put('/users/:id', async (req, res) => {
       data: {
         name,
         email,
-        role
+        phone: phone || null,
+        role,
+        beltLevel: beltLevel || 'White',
+        status: status || 'active'
       }
     });
 

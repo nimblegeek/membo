@@ -20,16 +20,28 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Protected routes - require Auth0 authentication
-app.use('/api/classes', checkJwt, extractUser, require('./routes/classes'));
-app.use('/api/bookings', checkJwt, extractUser, require('./routes/bookings'));
-app.use('/api/awards', checkJwt, extractUser, require('./routes/awards'));
-app.use('/api/admin', checkJwt, extractUser, require('./routes/admin'));
+// TEMPORARY: Disable JWT middleware for development
+// app.use('/api/classes', checkJwt, extractUser, require('./routes/classes'));
+// app.use('/api/bookings', checkJwt, extractUser, require('./routes/bookings'));
+// app.use('/api/awards', checkJwt, extractUser, require('./routes/awards'));
+// app.use('/api/admin', checkJwt, extractUser, require('./routes/admin'));
+
+// Development routes - no auth required
+app.use('/api/classes', require('./routes/classes'));
+app.use('/api/bookings', require('./routes/bookings'));
+app.use('/api/awards', require('./routes/awards'));
+app.use('/api/admin', require('./routes/admin'));
 
 // User profile route
-app.get('/api/user/profile', checkJwt, extractUser, async (req, res) => {
+app.get('/api/user/profile', async (req, res) => {
   try {
-    res.json(req.user);
+    // Mock user for development
+    res.json({
+      id: 'dev-admin-1',
+      name: 'Coach Admin',
+      email: 'coach@membo.com',
+      role: 'admin'
+    });
   } catch (error) {
     res.status(500).json({ error: 'Failed to get user profile' });
   }

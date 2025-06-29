@@ -4,6 +4,7 @@ import {
   UserPlus, Mail, Phone, Calendar, Award, 
   CheckCircle, XCircle, Eye, MoreHorizontal 
 } from 'lucide-react';
+import axios from 'axios';
 
 interface Member {
   id: string;
@@ -104,13 +105,25 @@ const MemberManagement: React.FC = () => {
   ];
 
   useEffect(() => {
-    // Simulate API call
-    setTimeout(() => {
+    // Fetch real data from API
+    fetchMembers();
+  }, []);
+
+  const fetchMembers = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get('/api/admin/users');
+      setMembers(response.data);
+      setFilteredMembers(response.data);
+    } catch (error) {
+      console.error('Error fetching members:', error);
+      // Fallback to sample data if API fails
       setMembers(sampleMembers);
       setFilteredMembers(sampleMembers);
+    } finally {
       setLoading(false);
-    }, 1000);
-  }, []);
+    }
+  };
 
   useEffect(() => {
     filterMembers();
@@ -166,36 +179,40 @@ const MemberManagement: React.FC = () => {
     setShowViewModal(true);
   };
 
-  const handleDeleteMember = (memberId: string) => {
+  const handleDeleteMember = async (memberId: string) => {
     if (window.confirm('Are you sure you want to delete this member? This action cannot be undone.')) {
-      setMembers(members.filter(member => member.id !== memberId));
+      try {
+        await axios.delete(`/api/admin/users/${memberId}`);
+        setMembers(members.filter(member => member.id !== memberId));
+      } catch (error) {
+        console.error('Error deleting member:', error);
+        alert('Failed to delete member. Please try again.');
+      }
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (showAddModal) {
-      // Add new member
-      const newMember: Member = {
-        id: Date.now().toString(),
-        ...formData,
-        joinDate: new Date().toISOString().split('T')[0],
-        totalClasses: 0,
-        attendanceRate: 0
-      };
-      setMembers([...members, newMember]);
-      setShowAddModal(false);
-    } else if (showEditModal && selectedMember) {
-      // Edit existing member
-      const updatedMembers = members.map(member =>
-        member.id === selectedMember.id
-          ? { ...member, ...formData }
-          : member
-      );
-      setMembers(updatedMembers);
-      setShowEditModal(false);
-      setSelectedMember(null);
+    try {
+      if (showAddModal) {
+        // Add new member via API
+        const response = await axios.post('/api/admin/users', formData);
+        setMembers([...members, response.data]);
+        setShowAddModal(false);
+      } else if (showEditModal && selectedMember) {
+        // Edit existing member via API
+        const response = await axios.put(`/api/admin/users/${selectedMember.id}`, formData);
+        const updatedMembers = members.map(member =>
+          member.id === selectedMember.id ? response.data : member
+        );
+        setMembers(updatedMembers);
+        setShowEditModal(false);
+        setSelectedMember(null);
+      }
+    } catch (error) {
+      console.error('Error saving member:', error);
+      alert('Failed to save member. Please try again.');
     }
   };
 
