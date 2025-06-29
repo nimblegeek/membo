@@ -1,17 +1,18 @@
-import React, { createContext, useContext, ReactNode } from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
+import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react';
 
 interface User {
   id: string;
   name: string;
   email: string;
   role: 'member' | 'admin';
+  beltLevel?: string;
+  status?: string;
 }
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: () => void;
+  login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   token: string | null;
   isAuthenticated: boolean;
@@ -32,36 +33,69 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const {
-    user: auth0User,
-    isAuthenticated,
-    isLoading,
-    loginWithRedirect,
-    logout: auth0Logout,
-    getAccessTokenSilently
-  } = useAuth0();
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [token, setToken] = useState<string | null>(null);
 
-  // TEMPORARY: Mock admin user for development (bypass Auth0)
-  const mockUser: User = {
-    id: 'dev-admin-1',
-    name: 'Coach Admin',
-    email: 'coach@membo.com',
-    role: 'admin'
-  };
+  // Check for existing session on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const storedToken = localStorage.getItem('rolvibe_token');
+        const storedUser = localStorage.getItem('rolvibe_user');
+        
+        if (storedToken && storedUser) {
+          setToken(storedToken);
+          setUser(JSON.parse(storedUser));
+        }
+      } catch (error) {
+        console.error('Error checking auth:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Use mock user for development
-  const user = mockUser;
-  const isAuthenticatedDev = true;
-  const loading = false;
+    checkAuth();
+  }, []);
 
-  const login = () => {
-    // Mock login - just redirect to dashboard
-    window.location.href = '/admin';
+  const login = async (email: string, password: string) => {
+    try {
+      setLoading(true);
+      
+      const response = await fetch('http://localhost:5001/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Login failed');
+      }
+
+      const data = await response.json();
+      
+      setUser(data.user);
+      setToken(data.token);
+      
+      // Store in localStorage
+      localStorage.setItem('rolvibe_token', data.token);
+      localStorage.setItem('rolvibe_user', JSON.stringify(data.user));
+      
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
   };
 
   const logout = () => {
-    // Mock logout - redirect to landing
-    window.location.href = '/landing';
+    setUser(null);
+    setToken(null);
+    localStorage.removeItem('rolvibe_token');
+    localStorage.removeItem('rolvibe_user');
   };
 
   const value: AuthContextType = {
@@ -69,8 +103,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     loading,
     login,
     logout,
-    token: 'mock-token-for-development',
-    isAuthenticated: isAuthenticatedDev
+    token,
+    isAuthenticated: !!user && !!token
   };
 
   return (

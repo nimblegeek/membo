@@ -1,17 +1,15 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { Auth0Provider } from '@auth0/auth0-react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
-import Navbar from './components/Navbar';
 import LandingPage from './components/LandingPage';
-import HomeRedirect from './components/HomeRedirect';
-import ClassList from './components/ClassList';
-import Profile from './components/Profile';
-import Awards from './components/Awards';
-import AdminDashboard from './components/AdminDashboard';
 import Login from './components/Login';
+import Dashboard from './components/Dashboard';
+import AdminDashboard from './components/AdminDashboard';
+import Navbar from './components/Navbar';
+import Awards from './components/Awards';
+import './index.css';
 
-// Protected Route component
+// Protected Route Component
 const ProtectedRoute: React.FC<{ children: React.ReactNode; adminOnly?: boolean }> = ({ 
   children, 
   adminOnly = false 
@@ -20,8 +18,11 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode; adminOnly?: boolean 
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-500 mx-auto mb-4"></div>
+          <p className="text-white">Loading RolVibe...</p>
+        </div>
       </div>
     );
   }
@@ -37,67 +38,66 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode; adminOnly?: boolean 
   return <>{children}</>;
 };
 
-// Main App Layout
-const AppLayout: React.FC = () => {
+const AppRoutes: React.FC = () => {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar />
-      <main className="container mx-auto px-4 py-8">
-        <Routes>
-          <Route path="/dashboard" element={
+    <div className="App">
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/landing" element={<LandingPage />} />
+        <Route path="/login" element={<Login />} />
+        
+        {/* Protected Routes */}
+        <Route 
+          path="/dashboard" 
+          element={
             <ProtectedRoute>
-              <ClassList />
+              <div>
+                <Navbar />
+                <Dashboard />
+              </div>
             </ProtectedRoute>
-          } />
-          <Route path="/profile" element={
-            <ProtectedRoute>
-              <Profile />
-            </ProtectedRoute>
-          } />
-          <Route path="/awards" element={
-            <ProtectedRoute>
-              <Awards />
-            </ProtectedRoute>
-          } />
-          <Route path="/admin" element={
+          } 
+        />
+        
+        <Route 
+          path="/admin" 
+          element={
             <ProtectedRoute adminOnly>
-              <AdminDashboard />
+              <div>
+                <Navbar />
+                <AdminDashboard />
+              </div>
             </ProtectedRoute>
-          } />
-          <Route path="/login" element={<Login />} />
-        </Routes>
-      </main>
+          } 
+        />
+        
+        <Route 
+          path="/awards" 
+          element={
+            <ProtectedRoute>
+              <div>
+                <Navbar />
+                <Awards />
+              </div>
+            </ProtectedRoute>
+          } 
+        />
+        
+        {/* Default redirect */}
+        <Route path="/" element={<Navigate to="/landing" replace />} />
+        <Route path="*" element={<Navigate to="/landing" replace />} />
+      </Routes>
     </div>
   );
 };
 
-// Main App component
 const App: React.FC = () => {
   return (
-    <Auth0Provider
-      domain={process.env.REACT_APP_AUTH0_DOMAIN || 'dev.membo.com'}
-      clientId={process.env.REACT_APP_AUTH0_CLIENT_ID || 'dev-client-id'}
-      authorizationParams={{
-        redirect_uri: window.location.origin,
-        audience: process.env.REACT_APP_AUTH0_AUDIENCE || 'https://dev.membo.com',
-        scope: "openid profile email"
-      }}
-    >
-      <AuthProvider>
-        <Router>
-          <Routes>
-            {/* Root redirect */}
-            <Route path="/" element={<Navigate to="/admin" replace />} />
-            
-            {/* Landing page route - no authentication required */}
-            <Route path="/landing" element={<LandingPage />} />
-            
-            {/* App routes - with authentication */}
-            <Route path="/*" element={<AppLayout />} />
-          </Routes>
-        </Router>
-      </AuthProvider>
-    </Auth0Provider>
+    <AuthProvider>
+      <Router>
+        <AppRoutes />
+      </Router>
+    </AuthProvider>
   );
 };
 

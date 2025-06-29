@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
 const { PrismaClient } = require('@prisma/client');
-const { checkJwt, extractUser } = require('./middleware/auth');
 
 const app = express();
 const prisma = new PrismaClient();
@@ -11,58 +10,41 @@ const PORT = process.env.PORT || 5001;
 app.use(cors());
 app.use(express.json());
 
-// Health check endpoint (no auth required)
-app.get('/api/health', (req, res) => {
+// Health check endpoint
+app.get('/health', (req, res) => {
   res.json({ 
     status: 'OK', 
-    timestamp: new Date().toISOString(),
-    message: 'Membo API is running'
+    message: 'RolVibe API is running',
+    timestamp: new Date().toISOString()
   });
 });
 
-// TEMPORARY: Disable JWT middleware for development
-// app.use('/api/classes', checkJwt, extractUser, require('./routes/classes'));
-// app.use('/api/bookings', checkJwt, extractUser, require('./routes/bookings'));
-// app.use('/api/awards', checkJwt, extractUser, require('./routes/awards'));
-// app.use('/api/admin', checkJwt, extractUser, require('./routes/admin'));
-
-// Development routes - no auth required
+// Routes
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/admin', require('./routes/admin'));
 app.use('/api/classes', require('./routes/classes'));
 app.use('/api/bookings', require('./routes/bookings'));
 app.use('/api/awards', require('./routes/awards'));
-app.use('/api/admin', require('./routes/admin'));
-
-// User profile route
-app.get('/api/user/profile', async (req, res) => {
-  try {
-    // Mock user for development
-    res.json({
-      id: 'dev-admin-1',
-      name: 'Coach Admin',
-      email: 'coach@membo.com',
-      role: 'admin'
-    });
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to get user profile' });
-  }
-});
+app.use('/api/dashboard', require('./routes/dashboard'));
 
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  
-  if (err.name === 'UnauthorizedError') {
-    return res.status(401).json({ error: 'Invalid token' });
-  }
-  
-  res.status(500).json({ error: 'Something went wrong!' });
+  res.status(500).json({ 
+    error: 'Something went wrong!',
+    message: 'RolVibe API encountered an error'
+  });
 });
 
 // 404 handler
 app.use('*', (req, res) => {
-  res.status(404).json({ error: 'Route not found' });
+  res.status(404).json({ 
+    error: 'Route not found',
+    message: 'The requested endpoint does not exist in RolVibe API'
+  });
 });
 
+// Start server
 const startServer = async () => {
   try {
     // Test database connection
@@ -70,12 +52,21 @@ const startServer = async () => {
     console.log('📊 Database connected successfully');
     
     app.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`🚀 RolVibe API server running on port ${PORT}`);
+      console.log(`📊 Health check: http://localhost:${PORT}/health`);
+      console.log(`🔗 API Base URL: http://localhost:${PORT}/api`);
     });
   } catch (error) {
     console.error('❌ Failed to start server:', error);
     process.exit(1);
   }
 };
+
+// Graceful shutdown
+process.on('SIGINT', async () => {
+  console.log('\n🛑 Shutting down RolVibe API server...');
+  await prisma.$disconnect();
+  process.exit(0);
+});
 
 startServer(); 

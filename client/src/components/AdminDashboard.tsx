@@ -1,407 +1,315 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Users, Calendar, TrendingUp, Settings, Plus, Edit, Trash2, 
-  CheckCircle, XCircle, Clock, BarChart3 
+  Users, Calendar, TrendingUp, Award, 
+  BarChart3, Settings, Zap, Star, 
+  ChevronRight, Plus, Eye, Edit, Trash2
 } from 'lucide-react';
-import axios from 'axios';
 import MemberManagement from './MemberManagement';
 
-interface DashboardStats {
+interface AdminStats {
   totalMembers: number;
+  activeMembers: number;
   totalClasses: number;
-  totalBookings: number;
-  totalAttended: number;
-  attendanceRate: number;
-}
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  stats: {
-    totalBookings: number;
-    attendedClasses: number;
-    attendanceRate: number;
-  };
-}
-
-interface Class {
-  id: string;
-  name: string;
-  date: string;
-  time: string;
-  maxSlots: number;
+  averageAttendance: number;
+  memberOfMonth: string;
+  recentSignups: number;
 }
 
 const AdminDashboard: React.FC = () => {
-  const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [users, setUsers] = useState<User[]>([]);
-  const [classes, setClasses] = useState<Class[]>([]);
-  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
+  const [stats, setStats] = useState<AdminStats>({
+    totalMembers: 0,
+    activeMembers: 0,
+    totalClasses: 0,
+    averageAttendance: 0,
+    memberOfMonth: '',
+    recentSignups: 0
+  });
 
   useEffect(() => {
-    fetchDashboardData();
+    // Fetch admin stats from API
+    const fetchStats = async () => {
+      try {
+        const response = await fetch('http://localhost:5001/api/admin/dashboard');
+        if (response.ok) {
+          const data = await response.json();
+          setStats(data);
+        }
+      } catch (error) {
+        console.error('Error fetching admin stats:', error);
+        // Set mock data for development
+        setStats({
+          totalMembers: 45,
+          activeMembers: 38,
+          totalClasses: 12,
+          averageAttendance: 85,
+          memberOfMonth: 'Sarah Johnson',
+          recentSignups: 3
+        });
+      }
+    };
+
+    fetchStats();
   }, []);
 
-  const fetchDashboardData = async () => {
-    try {
-      setLoading(true);
-      const [statsResponse, usersResponse, classesResponse] = await Promise.all([
-        axios.get('/api/admin/dashboard'),
-        axios.get('/api/admin/users'),
-        axios.get('/api/classes')
-      ]);
-      
-      setStats(statsResponse.data.stats);
-      setUsers(usersResponse.data);
-      setClasses(classesResponse.data);
-    } catch (error) {
-      console.error('Error fetching dashboard data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDeleteUser = async (userId: string) => {
-    if (window.confirm('Are you sure you want to delete this user?')) {
-      try {
-        await axios.delete(`/api/admin/users/${userId}`);
-        setUsers(users.filter(user => user.id !== userId));
-      } catch (error) {
-        console.error('Error deleting user:', error);
-      }
-    }
-  };
-
-  const handleDeleteClass = async (classId: string) => {
-    if (window.confirm('Are you sure you want to delete this class?')) {
-      try {
-        await axios.delete(`/api/classes/${classId}`);
-        setClasses(classes.filter(cls => cls.id !== classId));
-      } catch (error) {
-        console.error('Error deleting class:', error);
-      }
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+  const StatCard: React.FC<{ title: string; value: string | number; icon: React.ReactNode; color: string; change?: string }> = ({ 
+    title, value, icon, color, change 
+  }) => (
+    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+      <div className="flex items-center justify-between mb-4">
+        <div className={`w-12 h-12 ${color} rounded-xl flex items-center justify-center`}>
+          {icon}
+        </div>
+        {change && (
+          <span className="text-sm font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">
+            +{change}
+          </span>
+        )}
       </div>
-    );
-  }
+      <div>
+        <p className="text-sm font-medium text-gray-600 mb-1">{title}</p>
+        <p className="text-2xl font-bold text-gray-900">{value}</p>
+      </div>
+    </div>
+  );
+
+  const TabButton: React.FC<{ id: string; label: string; icon: React.ReactNode }> = ({ 
+    id, label, icon 
+  }) => (
+    <button
+      onClick={() => setActiveTab(id)}
+      className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+        activeTab === id
+          ? 'bg-violet-100 text-violet-700'
+          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+      }`}
+    >
+      {icon}
+      <span>{label}</span>
+    </button>
+  );
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-        <div className="flex space-x-2">
-          <button className="btn btn-primary flex items-center">
-            <Plus className="w-4 h-4 mr-2" />
-            Add Class
-          </button>
-          <button className="btn btn-secondary flex items-center">
-            <Users className="w-4 h-4 mr-2" />
-            Add User
-          </button>
-        </div>
-      </div>
-
-      {/* Stats Overview */}
-      {stats && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-          <div className="card">
-            <div className="flex items-center">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Users className="w-6 h-6 text-blue-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Members</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.totalMembers}</p>
-              </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex items-center space-x-3 mb-4">
+            <div className="w-12 h-12 bg-gradient-to-r from-violet-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+              <Zap className="w-6 h-6 text-white" />
             </div>
-          </div>
-
-          <div className="card">
-            <div className="flex items-center">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <Calendar className="w-6 h-6 text-green-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Classes</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.totalClasses}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="card">
-            <div className="flex items-center">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <BarChart3 className="w-6 h-6 text-purple-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Bookings</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.totalBookings}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="card">
-            <div className="flex items-center">
-              <div className="p-2 bg-yellow-100 rounded-lg">
-                <CheckCircle className="w-6 h-6 text-yellow-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Attended</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.totalAttended}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="card">
-            <div className="flex items-center">
-              <div className="p-2 bg-red-100 rounded-lg">
-                <TrendingUp className="w-6 h-6 text-red-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Attendance Rate</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.attendanceRate}%</p>
-              </div>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">
+                RolVibe Admin Dashboard
+              </h1>
+              <p className="text-gray-600">
+                Manage your martial arts club with powerful tools and insights
+              </p>
             </div>
           </div>
         </div>
-      )}
 
-      {/* Tabs */}
-      <div className="border-b border-gray-200">
-        <nav className="-mb-px flex space-x-8">
-          {[
-            { id: 'overview', name: 'Overview', icon: BarChart3 },
-            { id: 'members', name: 'Members', icon: Users },
-            { id: 'users', name: 'Users', icon: Users },
-            { id: 'classes', name: 'Classes', icon: Calendar },
-            { id: 'settings', name: 'Settings', icon: Settings }
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`py-2 px-1 border-b-2 font-medium text-sm flex items-center ${
-                activeTab === tab.id
-                  ? 'border-primary-500 text-primary-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              <tab.icon className="w-4 h-4 mr-2" />
-              {tab.name}
-            </button>
-          ))}
-        </nav>
-      </div>
+        {/* Tab Navigation */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-2 mb-8">
+          <div className="flex space-x-2">
+            <TabButton
+              id="overview"
+              label="Overview"
+              icon={<BarChart3 className="w-4 h-4" />}
+            />
+            <TabButton
+              id="members"
+              label="Members"
+              icon={<Users className="w-4 h-4" />}
+            />
+            <TabButton
+              id="classes"
+              label="Classes"
+              icon={<Calendar className="w-4 h-4" />}
+            />
+            <TabButton
+              id="awards"
+              label="Awards"
+              icon={<Award className="w-4 h-4" />}
+            />
+            <TabButton
+              id="settings"
+              label="Settings"
+              icon={<Settings className="w-4 h-4" />}
+            />
+          </div>
+        </div>
 
-      {/* Tab Content */}
-      <div className="mt-6">
+        {/* Tab Content */}
         {activeTab === 'overview' && (
-          <div className="grid gap-6 md:grid-cols-2">
-            <div className="card">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <div className="flex items-center space-x-3">
-                    <CheckCircle className="w-5 h-5 text-green-600" />
-                    <div>
-                      <p className="font-medium text-gray-900">New class booking</p>
-                      <p className="text-sm text-gray-600">John Doe booked Karate Class</p>
-                    </div>
-                  </div>
-                  <span className="text-sm text-gray-500">2 min ago</span>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <div className="flex items-center space-x-3">
-                    <Users className="w-5 h-5 text-blue-600" />
-                    <div>
-                      <p className="font-medium text-gray-900">New member joined</p>
-                      <p className="text-sm text-gray-600">Jane Smith registered</p>
-                    </div>
-                  </div>
-                  <span className="text-sm text-gray-500">1 hour ago</span>
-                </div>
-              </div>
+          <div className="space-y-8">
+            {/* Stats Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <StatCard
+                title="Total Members"
+                value={stats.totalMembers}
+                icon={<Users className="w-6 h-6 text-white" />}
+                color="bg-gradient-to-r from-violet-500 to-purple-600"
+                change="12%"
+              />
+              <StatCard
+                title="Active Members"
+                value={stats.activeMembers}
+                icon={<TrendingUp className="w-6 h-6 text-white" />}
+                color="bg-gradient-to-r from-green-500 to-emerald-600"
+                change="8%"
+              />
+              <StatCard
+                title="Total Classes"
+                value={stats.totalClasses}
+                icon={<Calendar className="w-6 h-6 text-white" />}
+                color="bg-gradient-to-r from-blue-500 to-indigo-600"
+              />
+              <StatCard
+                title="Avg Attendance"
+                value={`${stats.averageAttendance}%`}
+                icon={<BarChart3 className="w-6 h-6 text-white" />}
+                color="bg-gradient-to-r from-orange-500 to-red-600"
+                change="5%"
+              />
             </div>
 
-            <div className="card">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-              <div className="space-y-3">
-                <button className="w-full btn btn-primary flex items-center justify-center">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create New Class
-                </button>
-                <button className="w-full btn btn-secondary flex items-center justify-center">
-                  <Users className="w-4 h-4 mr-2" />
-                  Add New Member
-                </button>
-                <button className="w-full btn btn-secondary flex items-center justify-center">
-                  <Settings className="w-4 h-4 mr-2" />
-                  System Settings
-                </button>
+            {/* Main Content Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Recent Activity */}
+              <div className="lg:col-span-2">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+                  <div className="p-6 border-b border-gray-100">
+                    <h2 className="text-xl font-semibold text-gray-900">Recent Activity</h2>
+                  </div>
+                  <div className="p-6">
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                            <Users className="w-4 h-4 text-white" />
+                          </div>
+                          <div>
+                            <p className="font-medium text-gray-900">New member joined</p>
+                            <p className="text-sm text-gray-600">John Smith signed up for Karate Basics</p>
+                          </div>
+                        </div>
+                        <span className="text-sm text-gray-500">2 hours ago</span>
+                      </div>
+                      <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                            <Calendar className="w-4 h-4 text-white" />
+                          </div>
+                          <div>
+                            <p className="font-medium text-gray-900">Class completed</p>
+                            <p className="text-sm text-gray-600">Judo Advanced had 15 attendees</p>
+                          </div>
+                        </div>
+                        <span className="text-sm text-gray-500">4 hours ago</span>
+                      </div>
+                      <div className="flex items-center justify-between p-4 bg-purple-50 rounded-lg">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
+                            <Award className="w-4 h-4 text-white" />
+                          </div>
+                          <div>
+                            <p className="font-medium text-gray-900">Achievement unlocked</p>
+                            <p className="text-sm text-gray-600">Sarah Johnson reached 30-day streak</p>
+                          </div>
+                        </div>
+                        <span className="text-sm text-gray-500">1 day ago</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Sidebar */}
+              <div className="space-y-6">
+                {/* Member of the Month */}
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                  <div className="flex items-center mb-4">
+                    <Star className="w-5 h-5 mr-2 text-yellow-500" />
+                    <h3 className="text-lg font-semibold text-gray-900">Member of the Month</h3>
+                  </div>
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <Star className="w-8 h-8 text-white" />
+                    </div>
+                    <h4 className="font-semibold text-gray-900 mb-1">{stats.memberOfMonth}</h4>
+                    <p className="text-sm text-gray-600">Outstanding dedication and progress</p>
+                  </div>
+                </div>
+
+                {/* Quick Actions */}
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+                  <div className="space-y-3">
+                    <button className="w-full flex items-center justify-between p-3 text-left bg-violet-50 hover:bg-violet-100 rounded-lg transition-colors">
+                      <div className="flex items-center">
+                        <Plus className="w-5 h-5 mr-3 text-violet-600" />
+                        <span className="font-medium text-gray-900">Add New Member</span>
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-gray-400" />
+                    </button>
+                    <button className="w-full flex items-center justify-between p-3 text-left bg-green-50 hover:bg-green-100 rounded-lg transition-colors">
+                      <div className="flex items-center">
+                        <Calendar className="w-5 h-5 mr-3 text-green-600" />
+                        <span className="font-medium text-gray-900">Create Class</span>
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-gray-400" />
+                    </button>
+                    <button className="w-full flex items-center justify-between p-3 text-left bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+                      <div className="flex items-center">
+                        <Award className="w-5 h-5 mr-3 text-blue-600" />
+                        <span className="font-medium text-gray-900">Select Awards</span>
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-gray-400" />
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         )}
 
         {activeTab === 'members' && (
-          <MemberManagement />
-        )}
-
-        {activeTab === 'users' && (
-          <div className="card">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-gray-900">Users</h3>
-              <button className="btn btn-primary flex items-center">
-                <Plus className="w-4 h-4 mr-2" />
-                Add User
-              </button>
-            </div>
-            
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      User
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Role
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Attendance
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {users.map((user) => (
-                    <tr key={user.id}>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="w-8 h-8 bg-primary-600 rounded-full flex items-center justify-center">
-                            <span className="text-white font-bold text-sm">
-                              {user.name.charAt(0)}
-                            </span>
-                          </div>
-                          <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900">{user.name}</div>
-                            <div className="text-sm text-gray-500">{user.email}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          user.role === 'admin' 
-                            ? 'bg-red-100 text-red-800' 
-                            : 'bg-green-100 text-green-800'
-                        }`}>
-                          {user.role}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {user.stats.attendedClasses}/{user.stats.totalBookings} ({user.stats.attendanceRate}%)
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button className="text-primary-600 hover:text-primary-900 mr-3">
-                          <Edit className="w-4 h-4" />
-                        </button>
-                        <button 
-                          onClick={() => handleDeleteUser(user.id)}
-                          className="text-red-600 hover:text-red-900"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+            <MemberManagement />
           </div>
         )}
 
         {activeTab === 'classes' && (
-          <div className="card">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-gray-900">Classes</h3>
-              <button className="btn btn-primary flex items-center">
-                <Plus className="w-4 h-4 mr-2" />
-                Add Class
+              <h2 className="text-xl font-semibold text-gray-900">Class Management</h2>
+              <button className="bg-violet-600 text-white px-4 py-2 rounded-lg hover:bg-violet-700 transition-colors flex items-center space-x-2">
+                <Plus className="w-4 h-4" />
+                <span>Add Class</span>
               </button>
             </div>
-            
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {classes.map((classData) => (
-                <div key={classData.id} className="border border-gray-200 rounded-lg p-4">
-                  <div className="flex items-start justify-between mb-3">
-                    <h4 className="font-medium text-gray-900">{classData.name}</h4>
-                    <div className="flex space-x-1">
-                      <button className="text-primary-600 hover:text-primary-900">
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button 
-                        onClick={() => handleDeleteClass(classData.id)}
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                  <div className="space-y-2 text-sm text-gray-600">
-                    <div className="flex items-center">
-                      <Calendar className="w-4 h-4 mr-2" />
-                      <span>{new Date(classData.date).toLocaleDateString()}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <Clock className="w-4 h-4 mr-2" />
-                      <span>{classData.time}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <Users className="w-4 h-4 mr-2" />
-                      <span>Max: {classData.maxSlots}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
+            <p className="text-gray-600">Class management features coming soon...</p>
+          </div>
+        )}
+
+        {activeTab === 'awards' && (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-gray-900">Awards & Recognition</h2>
+              <button className="bg-violet-600 text-white px-4 py-2 rounded-lg hover:bg-violet-700 transition-colors flex items-center space-x-2">
+                <Award className="w-4 h-4" />
+                <span>Create Award</span>
+              </button>
             </div>
+            <p className="text-gray-600">Awards management features coming soon...</p>
           </div>
         )}
 
         {activeTab === 'settings' && (
-          <div className="card">
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">System Settings</h3>
-            <div className="space-y-6">
-              <div>
-                <h4 className="text-md font-medium text-gray-900 mb-3">API Configuration</h4>
-                <p className="text-gray-600 mb-4">
-                  Configure integration with external booking systems like Zoezi.
-                </p>
-                <button className="btn btn-secondary">
-                  Configure API Settings
-                </button>
-              </div>
-              
-              <div>
-                <h4 className="text-md font-medium text-gray-900 mb-3">System Mode</h4>
-                <p className="text-gray-600 mb-4">
-                  Switch between standalone and integrated modes.
-                </p>
-                <div className="flex space-x-3">
-                  <button className="btn btn-primary">Standalone Mode</button>
-                  <button className="btn btn-secondary">Integrated Mode</button>
-                </div>
-              </div>
-            </div>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-6">Club Settings</h2>
+            <p className="text-gray-600">Settings and configuration options coming soon...</p>
           </div>
         )}
       </div>

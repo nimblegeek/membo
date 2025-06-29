@@ -1,9 +1,10 @@
 {
-  "name": "membo-client",
-  "version": "0.1.0",
+  "name": "rolvibe-client",
+  "version": "1.0.0",
+  "description": "RolVibe - Martial Arts Club Management System Frontend",
   "private": true,
   "dependencies": {
-    "@auth0/auth0-react": "^2.3.0",
+    "@auth0/auth0-react": "^2.2.4",
     "@types/node": "^16.18.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
@@ -12,9 +13,10 @@
     "lucide-react": "^0.294.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.8.0",
+    "react-router-dom": "^6.20.0",
     "react-scripts": "5.0.1",
-    "typescript": "^4.9.0"
+    "typescript": "^4.9.5",
+    "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",

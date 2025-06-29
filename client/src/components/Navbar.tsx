@@ -2,103 +2,119 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { 
-  Menu, X, User, LogOut, Settings, Award, Calendar, 
-  Home, Users, BarChart3, ChevronDown 
+  Menu, X, User, LogOut, Settings, 
+  Zap, Bell, Search, ChevronDown 
 } from 'lucide-react';
 
 const Navbar: React.FC = () => {
-  const { user, logout, isAuthenticated } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
     navigate('/landing');
   };
 
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-  const toggleProfileDropdown = () => setIsProfileDropdownOpen(!isProfileDropdownOpen);
-
-  if (!isAuthenticated || !user) {
+  if (!user) {
     return null;
   }
 
   return (
-    <nav className="bg-white shadow-sm border-b border-gray-200">
+    <nav className="bg-white/90 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <div className="flex items-center space-x-3">
-            <Link to="/dashboard" className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">M</span>
-              </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                Membo
-              </span>
-            </Link>
-          </div>
+          <Link to="/dashboard" className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-gradient-to-r from-violet-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+              <Zap className="w-6 h-6 text-white" />
+            </div>
+            <span className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
+              RolVibe
+            </span>
+          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link
-              to="/dashboard"
-              className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors"
+            <Link 
+              to="/dashboard" 
+              className="text-gray-700 hover:text-violet-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
             >
-              <Calendar className="w-4 h-4" />
-              <span>Classes</span>
+              Dashboard
             </Link>
-            <Link
-              to="/awards"
-              className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors"
+            <Link 
+              to="/admin" 
+              className="text-gray-700 hover:text-violet-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
             >
-              <Award className="w-4 h-4" />
-              <span>Awards</span>
+              Admin
             </Link>
-            {user.role === 'admin' && (
-              <Link
-                to="/admin"
-                className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors"
-              >
-                <BarChart3 className="w-4 h-4" />
-                <span>Admin</span>
-              </Link>
-            )}
+            <Link 
+              to="/awards" 
+              className="text-gray-700 hover:text-violet-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+            >
+              Awards
+            </Link>
           </div>
 
-          {/* User Profile */}
+          {/* Right side - Search, Notifications, Profile */}
           <div className="hidden md:flex items-center space-x-4">
+            {/* Search */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <input
+                type="text"
+                placeholder="Search..."
+                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent text-sm"
+              />
+            </div>
+
+            {/* Notifications */}
+            <button className="relative p-2 text-gray-600 hover:text-violet-600 transition-colors">
+              <Bell className="w-5 h-5" />
+              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+            </button>
+
+            {/* Profile Dropdown */}
             <div className="relative">
               <button
-                onClick={toggleProfileDropdown}
-                className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors"
+                onClick={() => setIsProfileOpen(!isProfileOpen)}
+                className="flex items-center space-x-2 text-gray-700 hover:text-violet-600 transition-colors"
               >
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center">
-                  <span className="text-white text-sm font-medium">
+                <div className="w-8 h-8 bg-gradient-to-r from-violet-500 to-purple-600 rounded-full flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">
                     {user.name.charAt(0).toUpperCase()}
                   </span>
                 </div>
-                <span className="font-medium">{user.name}</span>
+                <span className="text-sm font-medium">{user.name}</span>
                 <ChevronDown className="w-4 h-4" />
               </button>
 
-              {isProfileDropdownOpen && (
+              {isProfileOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
                   <Link
                     to="/profile"
-                    className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:bg-gray-50"
-                    onClick={() => setIsProfileDropdownOpen(false)}
+                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                    onClick={() => setIsProfileOpen(false)}
                   >
-                    <User className="w-4 h-4" />
-                    <span>Profile</span>
+                    <User className="w-4 h-4 mr-3" />
+                    Profile
                   </Link>
+                  <Link
+                    to="/admin"
+                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                    onClick={() => setIsProfileOpen(false)}
+                  >
+                    <Settings className="w-4 h-4 mr-3" />
+                    Settings
+                  </Link>
+                  <hr className="my-2" />
                   <button
                     onClick={handleLogout}
-                    className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:bg-gray-50 w-full text-left"
+                    className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                   >
-                    <LogOut className="w-4 h-4" />
-                    <span>Sign Out</span>
+                    <LogOut className="w-4 h-4 mr-3" />
+                    Sign Out
                   </button>
                 </div>
               )}
@@ -108,8 +124,8 @@ const Navbar: React.FC = () => {
           {/* Mobile menu button */}
           <div className="md:hidden">
             <button
-              onClick={toggleMenu}
-              className="text-gray-700 hover:text-blue-600 transition-colors"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="text-gray-700 hover:text-violet-600 transition-colors"
             >
               {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -118,48 +134,41 @@ const Navbar: React.FC = () => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 py-4">
-            <div className="space-y-4">
+          <div className="md:hidden">
+            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t border-gray-200">
               <Link
                 to="/dashboard"
-                className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors"
+                className="block px-3 py-2 text-gray-700 hover:text-violet-600 hover:bg-gray-50 rounded-md text-base font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                <Calendar className="w-4 h-4" />
-                <span>Classes</span>
+                Dashboard
+              </Link>
+              <Link
+                to="/admin"
+                className="block px-3 py-2 text-gray-700 hover:text-violet-600 hover:bg-gray-50 rounded-md text-base font-medium transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Admin
               </Link>
               <Link
                 to="/awards"
-                className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors"
+                className="block px-3 py-2 text-gray-700 hover:text-violet-600 hover:bg-gray-50 rounded-md text-base font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                <Award className="w-4 h-4" />
-                <span>Awards</span>
+                Awards
               </Link>
-              {user.role === 'admin' && (
-                <Link
-                  to="/admin"
-                  className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <BarChart3 className="w-4 h-4" />
-                  <span>Admin</span>
-                </Link>
-              )}
               <Link
                 to="/profile"
-                className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors"
+                className="block px-3 py-2 text-gray-700 hover:text-violet-600 hover:bg-gray-50 rounded-md text-base font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                <User className="w-4 h-4" />
-                <span>Profile</span>
+                Profile
               </Link>
               <button
                 onClick={handleLogout}
-                className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors w-full text-left"
+                className="block w-full text-left px-3 py-2 text-gray-700 hover:text-violet-600 hover:bg-gray-50 rounded-md text-base font-medium transition-colors"
               >
-                <LogOut className="w-4 h-4" />
-                <span>Sign Out</span>
+                Sign Out
               </button>
             </div>
           </div>
