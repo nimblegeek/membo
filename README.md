@@ -166,10 +166,6 @@ REACT_APP_AUTH0_CLIENT_ID="your-auth0-client-id"
 2. Run `npm run build`
 3. Deploy the `build/` folder to your hosting service
 
-## 🤝 Contributing
-
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
-
 ### Development Workflow
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
