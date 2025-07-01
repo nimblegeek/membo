@@ -69,30 +69,30 @@ const Awards: React.FC = () => {
   const getAwardColor = (type: string) => {
     switch (type) {
       case 'member-of-month':
-        return 'bg-gradient-to-r from-yellow-400 to-orange-500';
+        return 'bg-gradient-to-r from-bee-yellow to-bee-orange';
       case 'achievement':
-        return 'bg-gradient-to-r from-blue-500 to-indigo-600';
+        return 'bg-bee-yellow';
       case 'milestone':
-        return 'bg-gradient-to-r from-green-500 to-emerald-600';
+        return 'bg-bee-orange';
       default:
-        return 'bg-gradient-to-r from-violet-500 to-purple-600';
+        return 'bg-bee-yellow';
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-bee-gray">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center space-x-3 mb-4">
-            <div className="w-12 h-12 bg-gradient-to-r from-violet-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-              <Award className="w-6 h-6 text-white" />
+            <div className="w-12 h-12 bg-bee-yellow rounded-xl flex items-center justify-center shadow-lg">
+              <Award className="w-6 h-6 text-bee-black" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold text-bee-black">
                 Awards & Recognition
               </h1>
-              <p className="text-gray-600">
+              <p className="text-bee-grayMuted">
                 Celebrating excellence and achievement in our martial arts community
               </p>
             </div>
@@ -101,18 +101,18 @@ const Awards: React.FC = () => {
 
         {/* Current Member of the Month */}
         {currentMember && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
+          <div className="bg-bee-white rounded-xl shadow-sm border border-bee-border p-8 mb-8">
             <div className="text-center">
-              <div className="w-24 h-24 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-                <Trophy className="w-12 h-12 text-white" />
+              <div className="w-24 h-24 bg-gradient-to-r from-bee-yellow to-bee-orange rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <Trophy className="w-12 h-12 text-bee-black" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              <h2 className="text-2xl font-bold text-bee-black mb-2">
                 Current Member of the Month
               </h2>
-              <h3 className="text-xl font-semibold text-gray-700 mb-4">
+              <h3 className="text-xl font-semibold text-bee-black mb-4">
                 {currentMember}
               </h3>
-              <p className="text-gray-600 max-w-2xl mx-auto">
+              <p className="text-bee-grayMuted max-w-2xl mx-auto">
                 Congratulations to {currentMember} for demonstrating exceptional dedication, 
                 leadership, and progress in their martial arts journey. Your commitment 
                 inspires us all!
@@ -124,30 +124,30 @@ const Awards: React.FC = () => {
         {/* Awards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {awards.map((award) => (
-            <div key={award.id} className="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div key={award.id} className="bg-bee-white rounded-xl shadow-sm border border-bee-border hover:shadow-md transition-shadow">
               <div className="p-6">
                 <div className="flex items-center justify-between mb-4">
                   <div className={`w-12 h-12 ${getAwardColor(award.type)} rounded-xl flex items-center justify-center`}>
                     {award.icon}
                   </div>
-                  <span className="text-sm text-gray-500">{award.date}</span>
+                  <span className="text-sm text-bee-grayMuted">{award.date}</span>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                <h3 className="text-lg font-semibold text-bee-black mb-2">
                   {award.title}
                 </h3>
-                <p className="text-gray-600 mb-4 leading-relaxed">
+                <p className="text-bee-grayMuted mb-4 leading-relaxed">
                   {award.description}
                 </p>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
-                    <div className="w-8 h-8 bg-gradient-to-r from-violet-500 to-purple-600 rounded-full flex items-center justify-center">
-                      <span className="text-white font-bold text-sm">
+                    <div className="w-8 h-8 bg-bee-yellow rounded-full flex items-center justify-center">
+                      <span className="text-bee-black font-bold text-sm">
                         {award.recipient.split(' ').map(n => n[0]).join('')}
                       </span>
                     </div>
-                    <span className="font-medium text-gray-900">{award.recipient}</span>
+                    <span className="font-medium text-bee-black">{award.recipient}</span>
                   </div>
-                  <Award className="w-5 h-5 text-gray-400" />
+                  <Award className="w-5 h-5 text-bee-grayMuted" />
                 </div>
               </div>
             </div>
@@ -155,38 +155,38 @@ const Awards: React.FC = () => {
         </div>
 
         {/* Achievement Stats */}
-        <div className="mt-12 bg-white rounded-xl shadow-sm border border-gray-100 p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+        <div className="mt-12 bg-bee-white rounded-xl shadow-sm border border-bee-border p-8">
+          <h2 className="text-2xl font-bold text-bee-black mb-6 text-center">
             Club Achievement Statistics
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-r from-violet-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Trophy className="w-8 h-8 text-white" />
+              <div className="w-16 h-16 bg-bee-yellow rounded-full flex items-center justify-center mx-auto mb-4">
+                <Trophy className="w-8 h-8 text-bee-black" />
               </div>
-              <div className="text-3xl font-bold text-gray-900 mb-2">12</div>
-              <div className="text-gray-600">Members of the Month</div>
+              <div className="text-3xl font-bold text-bee-black mb-2">12</div>
+              <div className="text-bee-grayMuted">Members of the Month</div>
             </div>
             <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <TrendingUp className="w-8 h-8 text-white" />
+              <div className="w-16 h-16 bg-bee-orange rounded-full flex items-center justify-center mx-auto mb-4">
+                <TrendingUp className="w-8 h-8 text-bee-black" />
               </div>
-              <div className="text-3xl font-bold text-gray-900 mb-2">45</div>
-              <div className="text-gray-600">Achievement Awards</div>
+              <div className="text-3xl font-bold text-bee-black mb-2">45</div>
+              <div className="text-bee-grayMuted">Achievement Awards</div>
             </div>
             <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Medal className="w-8 h-8 text-white" />
+              <div className="w-16 h-16 bg-bee-yellow rounded-full flex items-center justify-center mx-auto mb-4">
+                <Medal className="w-8 h-8 text-bee-black" />
               </div>
-              <div className="text-3xl font-bold text-gray-900 mb-2">28</div>
-              <div className="text-gray-600">Belt Promotions</div>
+              <div className="text-3xl font-bold text-bee-black mb-2">28</div>
+              <div className="text-bee-grayMuted">Belt Promotions</div>
             </div>
             <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Zap className="w-8 h-8 text-white" />
+              <div className="w-16 h-16 bg-bee-orange rounded-full flex items-center justify-center mx-auto mb-4">
+                <Zap className="w-8 h-8 text-bee-black" />
               </div>
-              <div className="text-3xl font-bold text-gray-900 mb-2">156</div>
-              <div className="text-gray-600">Milestone Reached</div>
+              <div className="text-3xl font-bold text-bee-black mb-2">156</div>
+              <div className="text-bee-grayMuted">Milestone Reached</div>
             </div>
           </div>
         </div>

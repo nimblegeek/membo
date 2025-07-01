@@ -127,9 +127,9 @@ const Profile: React.FC = () => {
 
           <div className="card">
             <div className="flex items-center">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <TrendingUp className="w-6 h-6 text-purple-600" />
-              </div>
+                          <div className="p-2 bg-blue-100 rounded-lg">
+              <TrendingUp className="w-6 h-6 text-blue-600" />
+            </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Current Streak</p>
                 <p className="text-2xl font-bold text-gray-900">{stats.currentStreak}</p>

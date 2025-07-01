@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Calendar, Clock, Users, BookOpen, CheckCircle, XCircle, ChevronLeft, ChevronRight, MapPin, Star } from 'lucide-react';
-import { format, addDays, startOfWeek, isSameDay, parseISO } from 'date-fns';
+import { format, addDays, startOfWeek, isSameDay, parseISO, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday, addMonths, subMonths } from 'date-fns';
 import axios from 'axios';
 
 interface Class {
@@ -31,6 +31,8 @@ const ClassList: React.FC = () => {
   const [bookingStatus, setBookingStatus] = useState<Record<string, string>>({});
   const [currentWeek, setCurrentWeek] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [view, setView] = useState<'day' | 'week' | 'month'>('week');
+  const [selectedDay, setSelectedDay] = useState<Date>(new Date());
 
   // Sample class data for demonstration
   const sampleClasses: Class[] = [
@@ -207,6 +209,149 @@ const ClassList: React.FC = () => {
     setCurrentWeek(prev => addDays(prev, direction === 'next' ? 7 : -7));
   };
 
+  // Helper for monthly calendar
+  const getMonthDays = (date: Date) => {
+    const start = startOfWeek(startOfMonth(date));
+    const end = addDays(endOfMonth(date), 6 - endOfMonth(date).getDay());
+    return eachDayOfInterval({ start, end });
+  };
+
+  // View toggle UI
+  const ViewToggle = () => (
+    <div className="flex space-x-2 mb-6">
+      {['day', 'week', 'month'].map((v) => (
+        <button
+          key={v}
+          onClick={() => setView(v as 'day' | 'week' | 'month')}
+          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+            view === v ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          }`}
+        >
+          {v.charAt(0).toUpperCase() + v.slice(1)}
+        </button>
+      ))}
+    </div>
+  );
+
+  // Daily view
+  const DailyView = () => {
+    const dayClasses = getClassesForDate(selectedDay);
+    return (
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <button onClick={() => setSelectedDay(addDays(selectedDay, -1))} className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <h2 className="text-xl font-semibold text-gray-900">{format(selectedDay, 'EEEE, MMMM d, yyyy')}</h2>
+          <button onClick={() => setSelectedDay(addDays(selectedDay, 1))} className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </div>
+        <div className="space-y-4">
+          {dayClasses.length === 0 ? (
+            <div className="text-center text-gray-400 text-sm py-8">No classes</div>
+          ) : (
+            dayClasses.map((classData) => {
+              const bookedSlots = getBookedSlots(classData);
+              const isBooked = isUserBooked(classData);
+              const isFull = isClassFull(classData);
+              const status = bookingStatus[classData.id];
+              return (
+                <div key={classData.id} className="bg-white rounded-lg shadow-sm border p-4 flex flex-col md:flex-row md:items-center md:justify-between">
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-900 mb-1">{classData.name}</h4>
+                    <div className="flex items-center text-sm text-gray-600 mb-1">
+                      <Clock className="w-4 h-4 mr-2" />{classData.time}
+                    </div>
+                    <div className="flex items-center text-sm text-gray-600 mb-1">
+                      <Users className="w-4 h-4 mr-2" />{classData.instructor}
+                    </div>
+                    <span className={`text-xs px-2 py-1 rounded-full ${getLevelColor(classData.level || '')}`}>{classData.level}</span>
+                  </div>
+                  <div className="flex flex-col items-end mt-4 md:mt-0">
+                    <span className={`text-sm font-medium mb-2 ${getStatusColor(classData)}`}>{bookedSlots}/{classData.maxSlots} slots</span>
+                    {isBooked ? (
+                      <div className="flex items-center text-green-600 font-medium"><CheckCircle className="w-5 h-5 mr-2" />Booked</div>
+                    ) : (
+                      <button
+                        onClick={() => handleBooking(classData.id)}
+                        disabled={isFull || status === 'booking'}
+                        className={`flex items-center px-4 py-2 rounded-lg font-medium transition-colors ${
+                          isFull || status === 'booking' ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700'
+                        }`}
+                      >
+                        {status === 'booking' ? (
+                          <><div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>Booking...</>
+                        ) : status === 'success' ? (
+                          <><CheckCircle className="w-5 h-5 mr-2" />Booked!</>
+                        ) : status === 'error' ? (
+                          <><XCircle className="w-5 h-5 mr-2" />Error</>
+                        ) : isFull ? (
+                          <><XCircle className="w-5 h-5 mr-2" />Class Full</>
+                        ) : (
+                          <><BookOpen className="w-5 h-5 mr-2" />Book This Class</>
+                        )}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  // Monthly view
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const MonthView = () => {
+    const days = getMonthDays(currentMonth);
+    return (
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <button onClick={() => setCurrentMonth(subMonths(currentMonth, 1))} className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <h2 className="text-xl font-semibold text-gray-900">{format(currentMonth, 'MMMM yyyy')}</h2>
+          <button onClick={() => setCurrentMonth(addMonths(currentMonth, 1))} className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </div>
+        <div className="grid grid-cols-7 gap-2 mb-2">
+          {[...Array(7)].map((_, i) => (
+            <div key={i} className="text-center text-xs font-medium text-gray-500">
+              {format(addDays(startOfWeek(new Date()), i), 'EEE')}
+            </div>
+          ))}
+        </div>
+        <div className="grid grid-cols-7 gap-2">
+          {days.map((day) => {
+            const dayClasses = getClassesForDate(day);
+            return (
+              <button
+                key={day.toISOString()}
+                onClick={() => setSelectedDay(day)}
+                className={`rounded-lg p-2 h-20 flex flex-col items-center justify-start border-2 transition-colors focus:outline-none ${
+                  isToday(day) ? 'border-blue-500' : isSameMonth(day, currentMonth) ? 'border-gray-200' : 'border-gray-100 opacity-50'
+                } ${selectedDay && isSameDay(day, selectedDay) ? 'bg-blue-100' : 'bg-white'}`}
+              >
+                <span className={`text-xs font-semibold ${isToday(day) ? 'text-blue-600' : 'text-gray-900'}`}>{format(day, 'd')}</span>
+                {dayClasses.length > 0 && (
+                  <span className="mt-1 text-[10px] text-blue-600 font-medium">{dayClasses.length} class{dayClasses.length > 1 ? 'es' : ''}</span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+        {/* Show classes for selected day below calendar */}
+        <div className="mt-6">
+          <DailyView />
+        </div>
+      </div>
+    );
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-64">
@@ -233,118 +378,125 @@ const ClassList: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Weekly Class Schedule</h1>
-        <p className="text-gray-600">Book your favorite martial arts classes for the week</p>
-      </div>
+      <ViewToggle />
+      {view === 'day' && <DailyView />}
+      {view === 'week' && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Weekly Class Schedule</h1>
+            <p className="text-gray-600">Book your favorite martial arts classes for the week</p>
+          </div>
 
-      {/* Week Navigation */}
-      <div className="flex items-center justify-between mb-6">
-        <button
-          onClick={() => navigateWeek('prev')}
-          className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-        >
-          <ChevronLeft className="w-5 h-5" />
-        </button>
-        
-        <h2 className="text-xl font-semibold text-gray-900">
-          {format(startOfWeek(currentWeek), 'MMMM d')} - {format(addDays(startOfWeek(currentWeek), 6), 'MMMM d, yyyy')}
-        </h2>
-        
-        <button
-          onClick={() => navigateWeek('next')}
-          className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-        >
-          <ChevronRight className="w-5 h-5" />
-        </button>
-      </div>
-
-      {/* Weekly Calendar View */}
-      <div className="grid gap-4 md:grid-cols-7">
-        {weekDays.map((day) => {
-          const dayClasses = getClassesForDate(day);
-          const isToday = isSameDay(day, new Date());
-          
-          return (
-            <div
-              key={day.toISOString()}
-              className={`bg-white rounded-lg shadow-sm border-2 ${
-                isToday ? 'border-blue-500' : 'border-gray-200'
-              } p-4 min-h-[200px]`}
+          {/* Week Navigation */}
+          <div className="flex items-center justify-between mb-6">
+            <button
+              onClick={() => navigateWeek('prev')}
+              className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
             >
-              {/* Day Header */}
-              <div className="text-center mb-4">
-                <div className={`text-sm font-medium ${
-                  isToday ? 'text-blue-600' : 'text-gray-500'
-                }`}>
-                  {format(day, 'EEE')}
-                </div>
-                <div className={`text-2xl font-bold ${
-                  isToday ? 'text-blue-600' : 'text-gray-900'
-                }`}>
-                  {format(day, 'd')}
-                </div>
-                {isToday && (
-                  <div className="text-xs text-blue-600 font-medium">TODAY</div>
-                )}
-              </div>
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            
+            <h2 className="text-xl font-semibold text-gray-900">
+              {format(startOfWeek(currentWeek), 'MMMM d')} - {format(addDays(startOfWeek(currentWeek), 6), 'MMMM d, yyyy')}
+            </h2>
+            
+            <button
+              onClick={() => navigateWeek('next')}
+              className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
 
-              {/* Classes for this day */}
-              <div className="space-y-3">
-                {dayClasses.length === 0 ? (
-                  <div className="text-center text-gray-400 text-sm py-4">
-                    No classes
+          {/* Weekly Calendar View */}
+          <div className="grid gap-4 md:grid-cols-7">
+            {weekDays.map((day) => {
+              const dayClasses = getClassesForDate(day);
+              const isToday = isSameDay(day, new Date());
+              
+              return (
+                <div
+                  key={day.toISOString()}
+                  className={`bg-white rounded-lg shadow-sm border-2 ${
+                    isToday ? 'border-blue-500' : 'border-gray-200'
+                  } p-4 min-h-[200px]`}
+                >
+                  {/* Day Header */}
+                  <div className="text-center mb-4">
+                    <div className={`text-sm font-medium ${
+                      isToday ? 'text-blue-600' : 'text-gray-500'
+                    }`}>
+                      {format(day, 'EEE')}
+                    </div>
+                    <div className={`text-2xl font-bold ${
+                      isToday ? 'text-blue-600' : 'text-gray-900'
+                    }`}>
+                      {format(day, 'd')}
+                    </div>
+                    {isToday && (
+                      <div className="text-xs text-blue-600 font-medium">TODAY</div>
+                    )}
                   </div>
-                ) : (
-                  dayClasses.map((classData) => {
-                    const bookedSlots = getBookedSlots(classData);
-                    const isBooked = isUserBooked(classData);
-                    const isFull = isClassFull(classData);
-                    const status = bookingStatus[classData.id];
 
-                    return (
-                      <div
-                        key={classData.id}
-                        className="bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer"
-                        onClick={() => setSelectedDate(day)}
-                      >
-                        <div className="flex items-start justify-between mb-2">
-                          <h4 className="text-sm font-semibold text-gray-900 line-clamp-2">
-                            {classData.name}
-                          </h4>
-                          <span className={`text-xs font-medium ${getStatusColor(classData)}`}>
-                            {bookedSlots}/{classData.maxSlots}
-                          </span>
-                        </div>
-                        
-                        <div className="flex items-center text-xs text-gray-600 mb-2">
-                          <Clock className="w-3 h-3 mr-1" />
-                          {classData.time}
-                        </div>
-                        
-                        <div className="flex items-center justify-between">
-                          <span className={`text-xs px-2 py-1 rounded-full ${getLevelColor(classData.level || '')}`}>
-                            {classData.level}
-                          </span>
-                          
-                          {isBooked ? (
-                            <CheckCircle className="w-4 h-4 text-green-600" />
-                          ) : isFull ? (
-                            <XCircle className="w-4 h-4 text-red-600" />
-                          ) : (
-                            <BookOpen className="w-4 h-4 text-blue-600" />
-                          )}
-                        </div>
+                  {/* Classes for this day */}
+                  <div className="space-y-3">
+                    {dayClasses.length === 0 ? (
+                      <div className="text-center text-gray-400 text-sm py-4">
+                        No classes
                       </div>
-                    );
-                  })
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
+                    ) : (
+                      dayClasses.map((classData) => {
+                        const bookedSlots = getBookedSlots(classData);
+                        const isBooked = isUserBooked(classData);
+                        const isFull = isClassFull(classData);
+                        const status = bookingStatus[classData.id];
+
+                        return (
+                          <div
+                            key={classData.id}
+                            className="bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer"
+                            onClick={() => setSelectedDate(day)}
+                          >
+                            <div className="flex items-start justify-between mb-2">
+                              <h4 className="text-sm font-semibold text-gray-900 line-clamp-2">
+                                {classData.name}
+                              </h4>
+                              <span className={`text-xs font-medium ${getStatusColor(classData)}`}>
+                                {bookedSlots}/{classData.maxSlots}
+                              </span>
+                            </div>
+                            
+                            <div className="flex items-center text-xs text-gray-600 mb-2">
+                              <Clock className="w-3 h-3 mr-1" />
+                              {classData.time}
+                            </div>
+                            
+                            <div className="flex items-center justify-between">
+                              <span className={`text-xs px-2 py-1 rounded-full ${getLevelColor(classData.level || '')}`}>
+                                {classData.level}
+                              </span>
+                              
+                              {isBooked ? (
+                                <CheckCircle className="w-4 h-4 text-green-600" />
+                              ) : isFull ? (
+                                <XCircle className="w-4 h-4 text-red-600" />
+                              ) : (
+                                <BookOpen className="w-4 h-4 text-blue-600" />
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+      {view === 'month' && <MonthView />}
 
       {/* Selected Day Details Modal */}
       {selectedDate && (

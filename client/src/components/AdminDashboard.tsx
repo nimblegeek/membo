@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Users, Calendar, TrendingUp, Award, 
-  BarChart3, Settings, Zap, Star, 
+  Zap, Users, Calendar, TrendingUp, Award, 
+  BarChart3, Settings, Star, 
   ChevronRight, Plus, Eye, Edit, Trash2
 } from 'lucide-react';
 import MemberManagement from './MemberManagement';
@@ -55,20 +55,20 @@ const AdminDashboard: React.FC = () => {
   const StatCard: React.FC<{ title: string; value: string | number; icon: React.ReactNode; color: string; change?: string }> = ({ 
     title, value, icon, color, change 
   }) => (
-    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+    <div className="bg-bee-white rounded-xl p-6 shadow-sm border border-bee-border hover:shadow-md transition-shadow">
       <div className="flex items-center justify-between mb-4">
         <div className={`w-12 h-12 ${color} rounded-xl flex items-center justify-center`}>
           {icon}
         </div>
         {change && (
-          <span className="text-sm font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">
+          <span className="text-sm font-medium text-bee-black bg-bee-gray px-2 py-1 rounded-full">
             +{change}
           </span>
         )}
       </div>
       <div>
-        <p className="text-sm font-medium text-gray-600 mb-1">{title}</p>
-        <p className="text-2xl font-bold text-gray-900">{value}</p>
+        <p className="text-sm font-medium text-bee-grayMuted mb-1">{title}</p>
+        <p className="text-2xl font-bold text-bee-black">{value}</p>
       </div>
     </div>
   );
@@ -80,8 +80,8 @@ const AdminDashboard: React.FC = () => {
       onClick={() => setActiveTab(id)}
       className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-colors ${
         activeTab === id
-          ? 'bg-violet-100 text-violet-700'
-          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+          ? 'bg-bee-gray text-bee-black'
+          : 'text-bee-grayMuted hover:text-bee-black hover:bg-bee-gray'
       }`}
     >
       {icon}
@@ -90,19 +90,19 @@ const AdminDashboard: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-bee-gray">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center space-x-3 mb-4">
-            <div className="w-12 h-12 bg-gradient-to-r from-violet-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-              <Zap className="w-6 h-6 text-white" />
+            <div className="w-12 h-12 bg-bee-yellow rounded-xl flex items-center justify-center shadow-lg">
+              <Zap className="w-6 h-6 text-bee-black" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
-                RolVibe Admin Dashboard
+              <h1 className="text-3xl font-bold text-bee-black">
+                MemberFlow Admin Dashboard
               </h1>
-              <p className="text-gray-600">
+              <p className="text-bee-grayMuted">
                 Manage your martial arts club with powerful tools and insights
               </p>
             </div>
@@ -110,7 +110,7 @@ const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Tab Navigation */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-2 mb-8">
+        <div className="bg-bee-white rounded-xl shadow-sm border border-bee-border p-2 mb-8">
           <div className="flex space-x-2">
             <TabButton
               id="overview"
@@ -148,28 +148,28 @@ const AdminDashboard: React.FC = () => {
               <StatCard
                 title="Total Members"
                 value={stats.totalMembers}
-                icon={<Users className="w-6 h-6 text-white" />}
-                color="bg-gradient-to-r from-violet-500 to-purple-600"
+                icon={<Users className="w-6 h-6 text-bee-black" />}
+                color="bg-bee-yellow"
                 change="12%"
               />
               <StatCard
                 title="Active Members"
                 value={stats.activeMembers}
-                icon={<TrendingUp className="w-6 h-6 text-white" />}
-                color="bg-gradient-to-r from-green-500 to-emerald-600"
+                icon={<TrendingUp className="w-6 h-6 text-bee-black" />}
+                color="bg-bee-yellow"
                 change="8%"
               />
               <StatCard
                 title="Total Classes"
                 value={stats.totalClasses}
-                icon={<Calendar className="w-6 h-6 text-white" />}
-                color="bg-gradient-to-r from-blue-500 to-indigo-600"
+                icon={<Calendar className="w-6 h-6 text-bee-black" />}
+                color="bg-bee-yellow"
               />
               <StatCard
                 title="Avg Attendance"
                 value={`${stats.averageAttendance}%`}
-                icon={<BarChart3 className="w-6 h-6 text-white" />}
-                color="bg-gradient-to-r from-orange-500 to-red-600"
+                icon={<BarChart3 className="w-6 h-6 text-bee-black" />}
+                color="bg-bee-yellow"
                 change="5%"
               />
             </div>
@@ -178,47 +178,47 @@ const AdminDashboard: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Recent Activity */}
               <div className="lg:col-span-2">
-                <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-                  <div className="p-6 border-b border-gray-100">
-                    <h2 className="text-xl font-semibold text-gray-900">Recent Activity</h2>
+                <div className="bg-bee-white rounded-xl shadow-sm border border-bee-border">
+                  <div className="p-6 border-b border-bee-border">
+                    <h2 className="text-xl font-semibold text-bee-black">Recent Activity</h2>
                   </div>
                   <div className="p-6">
                     <div className="space-y-4">
-                      <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
+                      <div className="flex items-center justify-between p-4 bg-bee-gray rounded-lg">
                         <div className="flex items-center space-x-3">
-                          <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                            <Users className="w-4 h-4 text-white" />
+                          <div className="w-8 h-8 bg-bee-yellow rounded-full flex items-center justify-center">
+                            <Users className="w-4 h-4 text-bee-black" />
                           </div>
                           <div>
-                            <p className="font-medium text-gray-900">New member joined</p>
-                            <p className="text-sm text-gray-600">John Smith signed up for Karate Basics</p>
+                            <p className="font-medium text-bee-black">New member joined</p>
+                            <p className="text-sm text-bee-grayMuted">John Smith signed up for Karate Basics</p>
                           </div>
                         </div>
-                        <span className="text-sm text-gray-500">2 hours ago</span>
+                        <span className="text-sm text-bee-grayMuted">2 hours ago</span>
                       </div>
-                      <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
+                      <div className="flex items-center justify-between p-4 bg-bee-gray rounded-lg">
                         <div className="flex items-center space-x-3">
-                          <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                            <Calendar className="w-4 h-4 text-white" />
+                          <div className="w-8 h-8 bg-bee-yellow rounded-full flex items-center justify-center">
+                            <Calendar className="w-4 h-4 text-bee-black" />
                           </div>
                           <div>
-                            <p className="font-medium text-gray-900">Class completed</p>
-                            <p className="text-sm text-gray-600">Judo Advanced had 15 attendees</p>
+                            <p className="font-medium text-bee-black">Class completed</p>
+                            <p className="text-sm text-bee-grayMuted">Judo Advanced had 15 attendees</p>
                           </div>
                         </div>
-                        <span className="text-sm text-gray-500">4 hours ago</span>
+                        <span className="text-sm text-bee-grayMuted">4 hours ago</span>
                       </div>
-                      <div className="flex items-center justify-between p-4 bg-purple-50 rounded-lg">
+                      <div className="flex items-center justify-between p-4 bg-bee-gray rounded-lg">
                         <div className="flex items-center space-x-3">
-                          <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
-                            <Award className="w-4 h-4 text-white" />
+                          <div className="w-8 h-8 bg-bee-yellow rounded-full flex items-center justify-center">
+                            <Award className="w-4 h-4 text-bee-black" />
                           </div>
                           <div>
-                            <p className="font-medium text-gray-900">Achievement unlocked</p>
-                            <p className="text-sm text-gray-600">Sarah Johnson reached 30-day streak</p>
+                            <p className="font-medium text-bee-black">Achievement unlocked</p>
+                            <p className="text-sm text-bee-grayMuted">Sarah Johnson reached 30-day streak</p>
                           </div>
                         </div>
-                        <span className="text-sm text-gray-500">1 day ago</span>
+                        <span className="text-sm text-bee-grayMuted">1 day ago</span>
                       </div>
                     </div>
                   </div>
@@ -228,44 +228,44 @@ const AdminDashboard: React.FC = () => {
               {/* Sidebar */}
               <div className="space-y-6">
                 {/* Member of the Month */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <div className="bg-bee-white rounded-xl shadow-sm border border-bee-border p-6">
                   <div className="flex items-center mb-4">
-                    <Star className="w-5 h-5 mr-2 text-yellow-500" />
-                    <h3 className="text-lg font-semibold text-gray-900">Member of the Month</h3>
+                    <Star className="w-5 h-5 mr-2 text-bee-yellow" />
+                    <h3 className="text-lg font-semibold text-bee-black">Member of the Month</h3>
                   </div>
                   <div className="text-center">
-                    <div className="w-16 h-16 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-3">
-                      <Star className="w-8 h-8 text-white" />
+                    <div className="w-16 h-16 bg-bee-yellow rounded-full flex items-center justify-center mx-auto mb-3">
+                      <Star className="w-8 h-8 text-bee-black" />
                     </div>
-                    <h4 className="font-semibold text-gray-900 mb-1">{stats.memberOfMonth}</h4>
-                    <p className="text-sm text-gray-600">Outstanding dedication and progress</p>
+                    <h4 className="font-semibold text-bee-black mb-1">{stats.memberOfMonth}</h4>
+                    <p className="text-sm text-bee-grayMuted">Outstanding dedication and progress</p>
                   </div>
                 </div>
 
                 {/* Quick Actions */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+                <div className="bg-bee-white rounded-xl shadow-sm border border-bee-border p-6">
+                  <h3 className="text-lg font-semibold text-bee-black mb-4">Quick Actions</h3>
                   <div className="space-y-3">
-                    <button className="w-full flex items-center justify-between p-3 text-left bg-violet-50 hover:bg-violet-100 rounded-lg transition-colors">
+                    <button className="w-full flex items-center justify-between p-3 text-left bg-bee-yellow hover:bg-bee-black hover:text-bee-yellow rounded-lg transition-colors border border-bee-black">
                       <div className="flex items-center">
-                        <Plus className="w-5 h-5 mr-3 text-violet-600" />
-                        <span className="font-medium text-gray-900">Add New Member</span>
+                        <Plus className="w-5 h-5 mr-3 text-bee-black" />
+                        <span className="font-medium text-bee-black">Add New Member</span>
                       </div>
-                      <ChevronRight className="w-4 h-4 text-gray-400" />
+                      <ChevronRight className="w-4 h-4 text-bee-grayMuted" />
                     </button>
-                    <button className="w-full flex items-center justify-between p-3 text-left bg-green-50 hover:bg-green-100 rounded-lg transition-colors">
+                    <button className="w-full flex items-center justify-between p-3 text-left bg-bee-white hover:bg-bee-yellow hover:text-bee-black rounded-lg transition-colors border border-bee-black">
                       <div className="flex items-center">
-                        <Calendar className="w-5 h-5 mr-3 text-green-600" />
-                        <span className="font-medium text-gray-900">Create Class</span>
+                        <Calendar className="w-5 h-5 mr-3 text-bee-black" />
+                        <span className="font-medium text-bee-black">Create Class</span>
                       </div>
-                      <ChevronRight className="w-4 h-4 text-gray-400" />
+                      <ChevronRight className="w-4 h-4 text-bee-grayMuted" />
                     </button>
-                    <button className="w-full flex items-center justify-between p-3 text-left bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+                    <button className="w-full flex items-center justify-between p-3 text-left bg-bee-yellow hover:bg-bee-black hover:text-bee-yellow rounded-lg transition-colors border border-bee-black">
                       <div className="flex items-center">
-                        <Award className="w-5 h-5 mr-3 text-blue-600" />
-                        <span className="font-medium text-gray-900">Select Awards</span>
+                        <Award className="w-5 h-5 mr-3 text-bee-black" />
+                        <span className="font-medium text-bee-black">Select Awards</span>
                       </div>
-                      <ChevronRight className="w-4 h-4 text-gray-400" />
+                      <ChevronRight className="w-4 h-4 text-bee-grayMuted" />
                     </button>
                   </div>
                 </div>
@@ -275,41 +275,41 @@ const AdminDashboard: React.FC = () => {
         )}
 
         {activeTab === 'members' && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+          <div className="bg-bee-white rounded-xl shadow-sm border border-bee-border">
             <MemberManagement />
           </div>
         )}
 
         {activeTab === 'classes' && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="bg-bee-white rounded-xl shadow-sm border border-bee-border p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-gray-900">Class Management</h2>
-              <button className="bg-violet-600 text-white px-4 py-2 rounded-lg hover:bg-violet-700 transition-colors flex items-center space-x-2">
+              <h2 className="text-xl font-semibold text-bee-black">Class Management</h2>
+              <button className="bg-bee-yellow text-bee-black px-4 py-2 rounded-lg hover:bg-bee-black transition-colors flex items-center space-x-2">
                 <Plus className="w-4 h-4" />
                 <span>Add Class</span>
               </button>
             </div>
-            <p className="text-gray-600">Class management features coming soon...</p>
+            <p className="text-bee-grayMuted">Class management features coming soon...</p>
           </div>
         )}
 
         {activeTab === 'awards' && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="bg-bee-white rounded-xl shadow-sm border border-bee-border p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-gray-900">Awards & Recognition</h2>
-              <button className="bg-violet-600 text-white px-4 py-2 rounded-lg hover:bg-violet-700 transition-colors flex items-center space-x-2">
+              <h2 className="text-xl font-semibold text-bee-black">Awards & Recognition</h2>
+              <button className="bg-bee-yellow text-bee-black px-4 py-2 rounded-lg hover:bg-bee-black transition-colors flex items-center space-x-2">
                 <Award className="w-4 h-4" />
                 <span>Create Award</span>
               </button>
             </div>
-            <p className="text-gray-600">Awards management features coming soon...</p>
+            <p className="text-bee-grayMuted">Awards management features coming soon...</p>
           </div>
         )}
 
         {activeTab === 'settings' && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">Club Settings</h2>
-            <p className="text-gray-600">Settings and configuration options coming soon...</p>
+          <div className="bg-bee-white rounded-xl shadow-sm border border-bee-border p-6">
+            <h2 className="text-xl font-semibold text-bee-black mb-6">Club Settings</h2>
+            <p className="text-bee-grayMuted">Settings and configuration options coming soon...</p>
           </div>
         )}
       </div>

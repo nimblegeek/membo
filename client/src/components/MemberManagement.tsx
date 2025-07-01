@@ -232,7 +232,7 @@ const MemberManagement: React.FC = () => {
       case 'Orange': return 'bg-orange-100 text-orange-800';
       case 'Green': return 'bg-green-100 text-green-800';
       case 'Blue': return 'bg-blue-100 text-blue-800';
-      case 'Purple': return 'bg-purple-100 text-purple-800';
+      case 'Purple': return 'bg-indigo-100 text-indigo-800';
       case 'Brown': return 'bg-amber-100 text-amber-800';
       case 'Black': return 'bg-gray-900 text-white';
       default: return 'bg-gray-100 text-gray-800';
@@ -308,8 +308,8 @@ const MemberManagement: React.FC = () => {
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center">
-            <div className="p-3 bg-purple-100 rounded-lg">
-              <Calendar className="w-6 h-6 text-purple-600" />
+            <div className="p-3 bg-blue-100 rounded-lg">
+              <Calendar className="w-6 h-6 text-blue-600" />
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">New This Month</p>

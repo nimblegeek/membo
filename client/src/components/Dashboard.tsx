@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { 
-  Calendar, TrendingUp, Award, Users, 
-  Clock, Target, Zap, Star, Activity,
+  Calendar, TrendingUp, Award, Zap, 
+  Clock, Target, Star,
   ChevronRight, BookOpen, Trophy, Flame
 } from 'lucide-react';
 import ClassList from './ClassList';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface DashboardStats {
   totalClasses: number;
@@ -15,6 +16,18 @@ interface DashboardStats {
   upcomingClasses: number;
   totalMembers: number;
 }
+
+// Mock attendance data for the last 8 weeks
+const attendanceData = [
+  { week: 'Wk 1', attendance: 42 },
+  { week: 'Wk 2', attendance: 48 },
+  { week: 'Wk 3', attendance: 38 },
+  { week: 'Wk 4', attendance: 55 },
+  { week: 'Wk 5', attendance: 60 },
+  { week: 'Wk 6', attendance: 53 },
+  { week: 'Wk 7', attendance: 58 },
+  { week: 'Wk 8', attendance: 62 },
+];
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
@@ -75,7 +88,7 @@ const Dashboard: React.FC = () => {
         {/* Welcome Header */}
         <div className="mb-8">
           <div className="flex items-center space-x-3 mb-4">
-            <div className="w-12 h-12 bg-gradient-to-r from-violet-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+            <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
               <Zap className="w-6 h-6 text-white" />
             </div>
             <div>
@@ -83,7 +96,7 @@ const Dashboard: React.FC = () => {
                 Welcome back, {user?.name}!
               </h1>
               <p className="text-gray-600">
-                Ready to continue your martial arts journey with RolVibe
+                Ready to continue your martial arts journey with MemberFlow
               </p>
             </div>
           </div>
@@ -95,7 +108,7 @@ const Dashboard: React.FC = () => {
             title="Classes Attended"
             value={stats.totalClasses}
             icon={<BookOpen className="w-6 h-6 text-white" />}
-            color="bg-gradient-to-r from-violet-500 to-purple-600"
+            color="bg-gradient-to-r from-blue-500 to-indigo-600"
           />
           <StatCard
             title="Attendance Rate"
@@ -117,6 +130,20 @@ const Dashboard: React.FC = () => {
           />
         </div>
 
+        {/* Attendance Overview */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-10">
+          <h2 className="text-xl font-bold text-gray-900 mb-6">Attendance Overview</h2>
+          <ResponsiveContainer width="100%" height={260}>
+            <LineChart data={attendanceData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="week" tick={{ fontSize: 14 }} />
+              <YAxis tick={{ fontSize: 14 }} />
+              <Tooltip />
+              <Line type="monotone" dataKey="attendance" stroke="#2563eb" strokeWidth={3} dot={{ r: 5 }} activeDot={{ r: 7 }} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Class Schedule */}
@@ -125,10 +152,10 @@ const Dashboard: React.FC = () => {
               <div className="p-6 border-b border-gray-100">
                 <div className="flex items-center justify-between">
                   <h2 className="text-xl font-semibold text-gray-900 flex items-center">
-                    <Calendar className="w-5 h-5 mr-2 text-violet-600" />
+                    <Calendar className="w-5 h-5 mr-2 text-blue-600" />
                     This Week's Classes
                   </h2>
-                  <button className="text-violet-600 hover:text-violet-700 text-sm font-medium flex items-center">
+                                      <button className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center">
                     View All
                     <ChevronRight className="w-4 h-4 ml-1" />
                   </button>
@@ -161,9 +188,9 @@ const Dashboard: React.FC = () => {
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
               <div className="space-y-3">
-                <button className="w-full flex items-center justify-between p-3 text-left bg-violet-50 hover:bg-violet-100 rounded-lg transition-colors">
+                <button className="w-full flex items-center justify-between p-3 text-left bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
                   <div className="flex items-center">
-                    <Calendar className="w-5 h-5 mr-3 text-violet-600" />
+                                          <Calendar className="w-5 h-5 mr-3 text-blue-600" />
                     <span className="font-medium text-gray-900">Book a Class</span>
                   </div>
                   <ChevronRight className="w-4 h-4 text-gray-400" />
@@ -204,7 +231,7 @@ const Dashboard: React.FC = () => {
                   </div>
                 </div>
                 <div className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full mt-2"></div>
+                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
                   <div>
                     <p className="text-sm font-medium text-gray-900">Class completed</p>
                     <p className="text-xs text-gray-500">Judo Basics - 2 hours ago</p>

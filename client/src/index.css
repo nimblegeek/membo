@@ -1,14 +1,24 @@
+@font-face {
+  font-family: 'Lineto Circular Pro Book';
+  src: url('./assets/fonts/lineto-circular-pro-book.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   html {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Nunito', 'Poppins', 'Lineto Circular Pro Book', system-ui, sans-serif;
+    background: #f5f6f7;
+    color: #1c1e21;
   }
   
   body {
-    @apply bg-gray-50 text-gray-900;
+    @apply bg-bee-gray text-bee-black;
   }
 }
 
@@ -18,23 +28,23 @@
   }
   
   .btn-primary {
-    @apply bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500;
+    @apply bg-bee-yellow text-bee-black hover:bg-bee-yellowDeep focus:ring-bee-yellow;
   }
   
   .btn-secondary {
-    @apply bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500;
+    @apply bg-bee-white text-bee-black border border-bee-yellow hover:bg-bee-yellow/10 focus:ring-bee-yellow;
   }
   
   .btn-danger {
-    @apply bg-red-600 text-white hover:bg-red-700 focus:ring-red-500;
+    @apply bg-bee-orange text-white hover:bg-bee-yellow focus:ring-bee-orange;
   }
   
   .card {
-    @apply bg-white rounded-lg shadow-sm border border-gray-200 p-6;
+    @apply bg-bee-white rounded-lg shadow-sm border border-bee-border p-6;
   }
   
   .input {
-    @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+    @apply w-full px-3 py-2 border border-bee-border rounded-lg bg-bee-grayLight focus:outline-none focus:ring-2 focus:ring-bee-yellow focus:border-transparent;
   }
 }
 
@@ -77,12 +87,12 @@ button, a {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
+  background: #FFC91F;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+  background: #FFC91F;
 }
 
 /* Loading animation */
@@ -126,7 +136,7 @@ button, a {
 
 /* Custom focus styles for accessibility */
 .focus-ring:focus {
-  outline: 2px solid #3b82f6;
+  outline: 2px solid #FFC91F;
   outline-offset: 2px;
 }
 
@@ -137,11 +147,11 @@ button, a {
 
 /* Custom button styles */
 .btn-primary {
-  @apply bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+  @apply bg-bee-yellow text-bee-black px-4 py-2 rounded-lg hover:bg-bee-yellowDeep transition-colors focus:outline-none focus:ring-2 focus:ring-bee-yellow focus:ring-offset-2;
 }
 
 .btn-secondary {
-  @apply bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2;
+  @apply bg-bee-white text-bee-black px-4 py-2 rounded-lg hover:bg-bee-yellow/10 transition-colors focus:outline-none focus:ring-2 focus:ring-bee-yellow focus:ring-offset-2;
 }
 
 /* Modal backdrop blur */
@@ -171,7 +181,7 @@ button, a {
 }
 
 .status-warning {
-  @apply text-yellow-600;
+  @apply text-orange-500;
 }
 
 .status-full {
@@ -184,17 +194,17 @@ button, a {
 }
 
 .level-beginner {
-  @apply bg-green-100 text-green-800;
+  @apply bg-green-50 text-green-600;
 }
 
 .level-intermediate {
-  @apply bg-yellow-100 text-yellow-800;
+  @apply bg-yellow-50 text-yellow-600;
 }
 
 .level-advanced {
-  @apply bg-red-100 text-red-800;
+  @apply bg-red-50 text-red-600;
 }
 
 .level-all {
-  @apply bg-blue-100 text-blue-800;
+  @apply bg-blue-50 text-blue-600;
 } 
