@@ -69,11 +69,11 @@ const Dashboard: React.FC = () => {
   const StatCard: React.FC<{ title: string; value: string | number; icon: React.ReactNode; color: string }> = ({ 
     title, value, icon, color 
   }) => (
-    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+    <div className="bg-bee-white rounded-2xl p-6 shadow-sm border border-bee-border hover:shadow-md transition-shadow">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-medium text-gray-600 mb-1">{title}</p>
-          <p className="text-2xl font-bold text-gray-900">{value}</p>
+          <p className="text-sm font-medium text-bee-grayMuted mb-1">{title}</p>
+          <p className="text-2xl font-bold text-bee-black">{value}</p>
         </div>
         <div className={`w-12 h-12 ${color} rounded-xl flex items-center justify-center`}>
           {icon}
@@ -83,19 +83,19 @@ const Dashboard: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-bee-gray">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Header */}
         <div className="mb-8">
           <div className="flex items-center space-x-3 mb-4">
-            <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
-              <Zap className="w-6 h-6 text-white" />
+            <div className="w-12 h-12 bg-bee-yellow rounded-xl flex items-center justify-center shadow-lg">
+              <Zap className="w-6 h-6 text-bee-black" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold text-bee-black">
                 Welcome back, {user?.name}!
               </h1>
-              <p className="text-gray-600">
+              <p className="text-bee-grayMuted">
                 Ready to continue your martial arts journey with MemberFlow
               </p>
             </div>
@@ -107,39 +107,39 @@ const Dashboard: React.FC = () => {
           <StatCard
             title="Classes Attended"
             value={stats.totalClasses}
-            icon={<BookOpen className="w-6 h-6 text-white" />}
-            color="bg-gradient-to-r from-blue-500 to-indigo-600"
+            icon={<BookOpen className="w-6 h-6 text-bee-black" />}
+            color="bg-bee-yellow"
           />
           <StatCard
             title="Attendance Rate"
             value={`${stats.attendanceRate}%`}
-            icon={<TrendingUp className="w-6 h-6 text-white" />}
-            color="bg-gradient-to-r from-green-500 to-emerald-600"
+            icon={<TrendingUp className="w-6 h-6 text-bee-black" />}
+            color="bg-bee-yellow"
           />
           <StatCard
             title="Current Streak"
             value={stats.currentStreak}
-            icon={<Flame className="w-6 h-6 text-white" />}
-            color="bg-gradient-to-r from-orange-500 to-red-600"
+            icon={<Flame className="w-6 h-6 text-bee-black" />}
+            color="bg-bee-orange"
           />
           <StatCard
             title="Upcoming Classes"
             value={stats.upcomingClasses}
-            icon={<Calendar className="w-6 h-6 text-white" />}
-            color="bg-gradient-to-r from-blue-500 to-indigo-600"
+            icon={<Calendar className="w-6 h-6 text-bee-black" />}
+            color="bg-bee-yellow"
           />
         </div>
 
         {/* Attendance Overview */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-10">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">Attendance Overview</h2>
+        <div className="bg-bee-white rounded-2xl shadow-sm border border-bee-border p-8 mb-10">
+          <h2 className="text-xl font-bold text-bee-black mb-6">Attendance Overview</h2>
           <ResponsiveContainer width="100%" height={260}>
             <LineChart data={attendanceData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="week" tick={{ fontSize: 14 }} />
-              <YAxis tick={{ fontSize: 14 }} />
-              <Tooltip />
-              <Line type="monotone" dataKey="attendance" stroke="#2563eb" strokeWidth={3} dot={{ r: 5 }} activeDot={{ r: 7 }} />
+              <XAxis dataKey="week" tick={{ fontSize: 14, fill: '#8A8A8A' }} />
+              <YAxis tick={{ fontSize: 14, fill: '#8A8A8A' }} />
+              <Tooltip contentStyle={{ background: '#fffbe6', borderColor: '#ffe066', color: '#222' }} />
+              <Line type="monotone" dataKey="attendance" stroke="#FFD600" strokeWidth={3} dot={{ r: 5, fill: '#FFD600' }} activeDot={{ r: 7, fill: '#FFD600' }} />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -148,14 +148,14 @@ const Dashboard: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Class Schedule */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-              <div className="p-6 border-b border-gray-100">
+            <div className="bg-bee-white rounded-2xl shadow-sm border border-bee-border">
+              <div className="p-6 border-b border-bee-border">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-semibold text-gray-900 flex items-center">
-                    <Calendar className="w-5 h-5 mr-2 text-blue-600" />
+                  <h2 className="text-xl font-semibold text-bee-black flex items-center">
+                    <Calendar className="w-5 h-5 mr-2 text-bee-yellow" />
                     This Week's Classes
                   </h2>
-                                      <button className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center">
+                  <button className="text-bee-yellow hover:text-bee-orange text-sm font-medium flex items-center">
                     View All
                     <ChevronRight className="w-4 h-4 ml-1" />
                   </button>
@@ -170,71 +170,71 @@ const Dashboard: React.FC = () => {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Member of the Month */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <div className="bg-bee-white rounded-2xl shadow-sm border border-bee-border p-6">
               <div className="flex items-center mb-4">
-                <Trophy className="w-5 h-5 mr-2 text-yellow-500" />
-                <h3 className="text-lg font-semibold text-gray-900">Member of the Month</h3>
+                <Trophy className="w-5 h-5 mr-2 text-bee-yellow" />
+                <h3 className="text-lg font-semibold text-bee-black">Member of the Month</h3>
               </div>
               <div className="text-center">
-                <div className="w-16 h-16 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Star className="w-8 h-8 text-white" />
+                <div className="w-16 h-16 bg-gradient-to-r from-bee-yellow to-bee-orange rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Star className="w-8 h-8 text-bee-white" />
                 </div>
-                <h4 className="font-semibold text-gray-900 mb-1">{stats.memberOfMonth}</h4>
-                <p className="text-sm text-gray-600">Congratulations on your dedication!</p>
+                <h4 className="font-semibold text-bee-black mb-1">{stats.memberOfMonth}</h4>
+                <p className="text-sm text-bee-grayMuted">Congratulations on your dedication!</p>
               </div>
             </div>
 
             {/* Quick Actions */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+            <div className="bg-bee-white rounded-2xl shadow-sm border border-bee-border p-6">
+              <h3 className="text-lg font-semibold text-bee-black mb-4">Quick Actions</h3>
               <div className="space-y-3">
-                <button className="w-full flex items-center justify-between p-3 text-left bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+                <button className="w-full flex items-center justify-between p-3 text-left bg-bee-yellow/10 hover:bg-bee-yellow/20 rounded-lg transition-colors">
                   <div className="flex items-center">
-                                          <Calendar className="w-5 h-5 mr-3 text-blue-600" />
-                    <span className="font-medium text-gray-900">Book a Class</span>
+                    <Calendar className="w-5 h-5 mr-3 text-bee-yellow" />
+                    <span className="font-medium text-bee-black">Book a Class</span>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-gray-400" />
+                  <ChevronRight className="w-4 h-4 text-bee-grayMuted" />
                 </button>
-                <button className="w-full flex items-center justify-between p-3 text-left bg-green-50 hover:bg-green-100 rounded-lg transition-colors">
+                <button className="w-full flex items-center justify-between p-3 text-left bg-bee-orange/10 hover:bg-bee-orange/20 rounded-lg transition-colors">
                   <div className="flex items-center">
-                    <Target className="w-5 h-5 mr-3 text-green-600" />
-                    <span className="font-medium text-gray-900">View Progress</span>
+                    <Target className="w-5 h-5 mr-3 text-bee-orange" />
+                    <span className="font-medium text-bee-black">View Progress</span>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-gray-400" />
+                  <ChevronRight className="w-4 h-4 text-bee-grayMuted" />
                 </button>
-                <button className="w-full flex items-center justify-between p-3 text-left bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+                <button className="w-full flex items-center justify-between p-3 text-left bg-bee-yellow/10 hover:bg-bee-yellow/20 rounded-lg transition-colors">
                   <div className="flex items-center">
-                    <Award className="w-5 h-5 mr-3 text-blue-600" />
-                    <span className="font-medium text-gray-900">See Awards</span>
+                    <Award className="w-5 h-5 mr-3 text-bee-yellow" />
+                    <span className="font-medium text-bee-black">See Awards</span>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-gray-400" />
+                  <ChevronRight className="w-4 h-4 text-bee-grayMuted" />
                 </button>
               </div>
             </div>
 
             {/* Recent Activity */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
+            <div className="bg-bee-white rounded-2xl shadow-sm border border-bee-border p-6">
+              <h3 className="text-lg font-semibold text-bee-black mb-4">Recent Activity</h3>
               <div className="space-y-4">
                 <div className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+                  <div className="w-2 h-2 bg-bee-orange rounded-full mt-2"></div>
                   <div>
-                    <p className="text-sm font-medium text-gray-900">Class booked</p>
-                    <p className="text-xs text-gray-500">Karate Advanced - Tomorrow 6:00 PM</p>
+                    <p className="text-sm font-medium text-bee-black">Class booked</p>
+                    <p className="text-xs text-bee-grayMuted">Karate Advanced - Tomorrow 6:00 PM</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                  <div className="w-2 h-2 bg-bee-yellow rounded-full mt-2"></div>
                   <div>
-                    <p className="text-sm font-medium text-gray-900">Achievement unlocked</p>
-                    <p className="text-xs text-gray-500">5-day attendance streak</p>
+                    <p className="text-sm font-medium text-bee-black">Achievement unlocked</p>
+                    <p className="text-xs text-bee-grayMuted">5-day attendance streak</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                  <div className="w-2 h-2 bg-bee-yellow rounded-full mt-2"></div>
                   <div>
-                    <p className="text-sm font-medium text-gray-900">Class completed</p>
-                    <p className="text-xs text-gray-500">Judo Basics - 2 hours ago</p>
+                    <p className="text-sm font-medium text-bee-black">Class completed</p>
+                    <p className="text-xs text-bee-grayMuted">Judo Basics - 2 hours ago</p>
                   </div>
                 </div>
               </div>

@@ -7,6 +7,9 @@ import Dashboard from './components/Dashboard';
 import AdminDashboard from './components/AdminDashboard';
 import Navbar from './components/Navbar';
 import Awards from './components/Awards';
+import BlogPage from './components/BlogPage';
+import MembersInfoPage from './components/MembersInfoPage';
+import AcademiesInfoPage from './components/AcademiesInfoPage';
 import './index.css';
 
 // Protected Route Component
@@ -82,6 +85,11 @@ const AppRoutes: React.FC = () => {
             </ProtectedRoute>
           } 
         />
+        
+        <Route path="/blog" element={<BlogPage />} />
+        
+        <Route path="/members-info" element={<MembersInfoPage />} />
+        <Route path="/academies-info" element={<AcademiesInfoPage />} />
         
         {/* Default redirect */}
         <Route path="/" element={<Navigate to="/landing" replace />} />

@@ -29,7 +29,11 @@ interface MemberFormData {
   status: 'active' | 'inactive' | 'suspended';
 }
 
-const MemberManagement: React.FC = () => {
+type MemberManagementProps = {
+  addMemberTrigger?: number;
+};
+
+const MemberManagement = ({ addMemberTrigger }: MemberManagementProps) => {
   const [members, setMembers] = useState<Member[]>([]);
   const [filteredMembers, setFilteredMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
@@ -47,6 +51,10 @@ const MemberManagement: React.FC = () => {
     beltLevel: 'White',
     status: 'active'
   });
+  const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
+  const [apiError, setApiError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   // Sample data for demonstration
   const sampleMembers: Member[] = [
@@ -158,6 +166,9 @@ const MemberManagement: React.FC = () => {
       beltLevel: 'White',
       status: 'active'
     });
+    setFormErrors({});
+    setApiError(null);
+    setSuccessMessage(null);
     setShowAddModal(true);
   };
 
@@ -191,15 +202,41 @@ const MemberManagement: React.FC = () => {
     }
   };
 
+  const validateForm = () => {
+    const errors: { [key: string]: string } = {};
+    if (!formData.name.trim()) errors.name = 'Name is required';
+    if (!formData.email.trim()) {
+      errors.email = 'Email is required';
+    } else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(formData.email)) {
+      errors.email = 'Invalid email address';
+    }
+    if (!formData.role) errors.role = 'Role is required';
+    return errors;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    setApiError(null);
+    setSuccessMessage(null);
+    const errors = validateForm();
+    setFormErrors(errors);
+    if (Object.keys(errors).length > 0) return;
+    setSubmitting(true);
     try {
       if (showAddModal) {
         // Add new member via API
         const response = await axios.post('/api/admin/users', formData);
         setMembers([...members, response.data]);
         setShowAddModal(false);
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          role: 'member',
+          beltLevel: 'White',
+          status: 'active'
+        });
+        setSuccessMessage('Member added successfully!');
       } else if (showEditModal && selectedMember) {
         // Edit existing member via API
         const response = await axios.put(`/api/admin/users/${selectedMember.id}`, formData);
@@ -209,11 +246,17 @@ const MemberManagement: React.FC = () => {
         setMembers(updatedMembers);
         setShowEditModal(false);
         setSelectedMember(null);
+        setSuccessMessage('Member updated successfully!');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving member:', error);
-      alert('Failed to save member. Please try again.');
+      if (error.response && error.response.data && error.response.data.error) {
+        setApiError(error.response.data.error);
+      } else {
+        setApiError('Failed to save member. Please try again.');
+      }
     }
+    setSubmitting(false);
   };
 
   const getStatusColor = (status: string) => {
@@ -238,6 +281,14 @@ const MemberManagement: React.FC = () => {
       default: return 'bg-gray-100 text-gray-800';
     }
   };
+
+  // Open add modal when trigger changes
+  useEffect(() => {
+    if (addMemberTrigger !== undefined && addMemberTrigger > 0) {
+      handleAddMember();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [addMemberTrigger]);
 
   if (loading) {
     return (
@@ -468,12 +519,25 @@ const MemberManagement: React.FC = () => {
                   onClick={() => {
                     setShowAddModal(false);
                     setShowEditModal(false);
+                    setFormErrors({});
+                    setApiError(null);
                   }}
                   className="text-gray-400 hover:text-gray-600"
                 >
                   <XCircle className="w-6 h-6" />
                 </button>
               </div>
+
+              {apiError && (
+                <div className="mb-4 text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-2 text-sm">
+                  {apiError}
+                </div>
+              )}
+              {successMessage && (
+                <div className="mb-4 text-green-700 bg-green-50 border border-green-200 rounded-lg px-4 py-2 text-sm">
+                  {successMessage}
+                </div>
+              )}
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
@@ -487,7 +551,9 @@ const MemberManagement: React.FC = () => {
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Enter full name"
+                    aria-invalid={!!formErrors.name}
                   />
+                  {formErrors.name && <p className="text-red-600 text-xs mt-1">{formErrors.name}</p>}
                 </div>
 
                 <div>
@@ -501,7 +567,9 @@ const MemberManagement: React.FC = () => {
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Enter email address"
+                    aria-invalid={!!formErrors.email}
                   />
+                  {formErrors.email && <p className="text-red-600 text-xs mt-1">{formErrors.email}</p>}
                 </div>
 
                 <div>
@@ -560,6 +628,8 @@ const MemberManagement: React.FC = () => {
                     onClick={() => {
                       setShowAddModal(false);
                       setShowEditModal(false);
+                      setFormErrors({});
+                      setApiError(null);
                     }}
                     className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
                   >
@@ -567,9 +637,10 @@ const MemberManagement: React.FC = () => {
                   </button>
                   <button
                     type="submit"
-                    className="px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:shadow-lg transition-all duration-200"
+                    className="px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:shadow-lg transition-all duration-200 disabled:opacity-60"
+                    disabled={submitting}
                   >
-                    {showAddModal ? 'Add Member' : 'Save Changes'}
+                    {submitting ? 'Saving...' : showAddModal ? 'Add Member' : 'Save Changes'}
                   </button>
                 </div>
               </form>

@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { 
   Menu, X, User, LogOut, Settings, 
-  Bell, Search, ChevronDown 
+  Bell, Search, ChevronDown, Zap 
 } from 'lucide-react';
 
 const Navbar: React.FC = () => {
@@ -26,28 +26,9 @@ const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link to="/dashboard" className="flex items-center space-x-3">
+          <Link to="/dashboard" className="flex items-center h-16 space-x-3">
             <div className="w-10 h-10 bg-bee-yellow rounded-xl flex items-center justify-center shadow-lg">
-              <svg width="32" height="32" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                <rect width="200" height="200" fill="#f0f0f0"/>
-                <circle cx="100" cy="80" r="50" fill="#8B4513"/>
-                <circle cx="100" cy="90" r="40" fill="#F4A460"/>
-                <circle cx="60" cy="60" r="20" fill="#8B4513"/>
-                <circle cx="140" cy="60" r="20" fill="#8B4513"/>
-                <circle cx="60" cy="60" r="15" fill="#F4A460"/>
-                <circle cx="140" cy="60" r="15" fill="#F4A460"/>
-                <circle cx="85" cy="80" r="8" fill="white"/>
-                <circle cx="115" cy="80" r="8" fill="white"/>
-                <circle cx="85" cy="80" r="4" fill="black"/>
-                <circle cx="115" cy="80" r="4" fill="black"/>
-                <ellipse cx="100" cy="95" rx="8" ry="5" fill="black"/>
-                <path d="M90 110 Q100 120 110 110" fill="none" stroke="black" stroke-width="3"/>
-                <ellipse cx="100" cy="150" rx="30" ry="40" fill="#8B4513"/>
-                <path d="M70 130 Q60 150 70 170" fill="none" stroke="#8B4513" stroke-width="10"/>
-                <path d="M130 130 Q140 150 130 170" fill="none" stroke="#8B4513" stroke-width="10"/>
-                <path d="M85 180 Q80 200 90 200" fill="none" stroke="#8B4513" stroke-width="10"/>
-                <path d="M115 180 Q120 200 110 200" fill="none" stroke="#8B4513" stroke-width="10"/>
-              </svg>
+              <Zap className="w-6 h-6 text-bee-black" />
             </div>
             <span className="text-2xl font-bold text-bee-black">
               MemberFlow
@@ -55,50 +36,51 @@ const Navbar: React.FC = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-                          <Link 
-                to="/dashboard" 
-                className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-              >
+          <div className="hidden md:flex items-center h-16 space-x-2">
+            <Link 
+              to="/dashboard" 
+              className="flex items-center h-16 px-6 text-gray-700 hover:text-blue-600 rounded-lg text-sm font-medium transition-colors"
+            >
               Dashboard
             </Link>
             <Link 
               to="/admin" 
-              className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              className="flex items-center h-16 px-6 text-gray-700 hover:text-blue-600 rounded-lg text-sm font-medium transition-colors"
             >
               Admin
             </Link>
             <Link 
               to="/awards" 
-              className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              className="flex items-center h-16 px-6 text-gray-700 hover:text-blue-600 rounded-lg text-sm font-medium transition-colors"
             >
               Awards
             </Link>
           </div>
 
           {/* Right side - Search, Notifications, Profile */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center h-16 space-x-4">
             {/* Search */}
-            <div className="relative">
+            <div className="relative flex items-center h-16">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <input
                 type="text"
                 placeholder="Search..."
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                className="pl-10 pr-4 h-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                style={{ marginTop: '0', marginBottom: '0' }}
               />
             </div>
 
             {/* Notifications */}
-            <button className="relative p-2 text-gray-600 hover:text-blue-600 transition-colors">
+            <button className="relative flex items-center h-10 p-2 text-gray-600 hover:text-blue-600 transition-colors">
               <Bell className="w-5 h-5" />
               <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
             </button>
 
             {/* Profile Dropdown */}
-            <div className="relative">
+            <div className="relative flex items-center h-16">
               <button
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
-                className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors"
+                className="flex items-center h-10 space-x-2 text-gray-700 hover:text-blue-600 transition-colors"
               >
                 <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
                   <span className="text-white font-bold text-sm">

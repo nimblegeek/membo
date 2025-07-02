@@ -5,6 +5,7 @@ import {
   ChevronRight, Plus, Eye, Edit, Trash2
 } from 'lucide-react';
 import MemberManagement from './MemberManagement';
+import { useAuth } from '../contexts/AuthContext';
 
 interface AdminStats {
   totalMembers: number;
@@ -16,6 +17,7 @@ interface AdminStats {
 }
 
 const AdminDashboard: React.FC = () => {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
   const [stats, setStats] = useState<AdminStats>({
     totalMembers: 0,
@@ -25,6 +27,7 @@ const AdminDashboard: React.FC = () => {
     memberOfMonth: '',
     recentSignups: 0
   });
+  const [addMemberTrigger, setAddMemberTrigger] = useState(0);
 
   useEffect(() => {
     // Fetch admin stats from API
@@ -51,6 +54,17 @@ const AdminDashboard: React.FC = () => {
 
     fetchStats();
   }, []);
+
+  if (!user || user.role !== 'admin') {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="bg-bee-white rounded-xl shadow p-8 border border-bee-border text-center">
+          <h2 className="text-2xl font-bold text-bee-black mb-2">Access Denied</h2>
+          <p className="text-bee-grayMuted">You do not have permission to view this page.</p>
+        </div>
+      </div>
+    );
+  }
 
   const StatCard: React.FC<{ title: string; value: string | number; icon: React.ReactNode; color: string; change?: string }> = ({ 
     title, value, icon, color, change 
@@ -246,7 +260,13 @@ const AdminDashboard: React.FC = () => {
                 <div className="bg-bee-white rounded-xl shadow-sm border border-bee-border p-6">
                   <h3 className="text-lg font-semibold text-bee-black mb-4">Quick Actions</h3>
                   <div className="space-y-3">
-                    <button className="w-full flex items-center justify-between p-3 text-left bg-bee-yellow hover:bg-bee-black hover:text-bee-yellow rounded-lg transition-colors border border-bee-black">
+                    <button
+                      className="w-full flex items-center justify-between p-3 text-left bg-bee-yellow hover:bg-bee-black hover:text-bee-yellow rounded-lg transition-colors border border-bee-black"
+                      onClick={() => {
+                        setActiveTab('members');
+                        setAddMemberTrigger(t => t + 1);
+                      }}
+                    >
                       <div className="flex items-center">
                         <Plus className="w-5 h-5 mr-3 text-bee-black" />
                         <span className="font-medium text-bee-black">Add New Member</span>
@@ -276,7 +296,7 @@ const AdminDashboard: React.FC = () => {
 
         {activeTab === 'members' && (
           <div className="bg-bee-white rounded-xl shadow-sm border border-bee-border">
-            <MemberManagement />
+            <MemberManagement addMemberTrigger={addMemberTrigger} />
           </div>
         )}
 

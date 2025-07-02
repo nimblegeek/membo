@@ -21,12 +21,14 @@ const LandingPage: React.FC = () => {
             </span>
           </div>
           <div className="hidden md:flex items-center space-x-8">
-            <a href="#features" className="text-bee-black hover:text-bee-yellow transition-colors">Features</a>
-            <a href="#pricing" className="text-bee-black hover:text-bee-yellow transition-colors">Pricing</a>
-            <a href="#contact" className="text-bee-black hover:text-bee-yellow transition-colors">Contact</a>
+            <a href="#features" className="flex items-center h-12 px-6 text-bee-black hover:text-bee-yellow rounded-lg font-medium transition-colors">Features</a>
+            <a href="#pricing" className="flex items-center h-12 px-6 text-bee-black hover:text-bee-yellow rounded-lg font-medium transition-colors">Pricing</a>
+            <Link to="/members-info" className="flex items-center h-12 px-6 text-bee-black hover:text-bee-yellow rounded-lg font-medium transition-colors">Members</Link>
+            <Link to="/academies-info" className="flex items-center h-12 px-6 text-bee-black hover:text-bee-yellow rounded-lg font-medium transition-colors">Academies</Link>
+            <Link to="/blog" className="flex items-center h-12 px-6 text-bee-black hover:text-bee-yellow rounded-lg font-medium transition-colors">Blog</Link>
             <Link 
               to="/login" 
-              className="bg-bee-yellow text-bee-black px-6 py-2 rounded-lg hover:bg-bee-yellowDeep hover:scale-105 transition-all duration-200"
+              className="flex items-center h-12 px-6 bg-bee-yellow text-bee-black rounded-lg font-medium hover:bg-bee-yellowDeep hover:scale-105 transition-all duration-200"
             >
               Get Started
             </Link>
@@ -39,14 +41,13 @@ const LandingPage: React.FC = () => {
         <div className="max-w-7xl mx-auto text-center">
           <div className="mb-8">
             <h1 className="text-5xl md:text-7xl font-bold text-bee-black mb-6">
-              Transform Your
+              Compress the admin-work for your
               <span className="block text-bee-black">
-                Martial Arts Club
+                Martial Arts Academy
               </span>
             </h1>
             <p className="text-xl md:text-2xl text-bee-black max-w-3xl mx-auto leading-relaxed">
-              MemberFlow is the ultimate martial arts club management platform. Streamline member management, 
-              track progress, and build a thriving community with powerful tools designed for modern dojos.
+              MemberFlow helps you focus on what matters the most - <span className="pencil-underline font-semibold relative">your members</span>. Streamline daily operations with one system designed to take the admin work off your plate, giving you back the time to do what you do best.
             </p>
           </div>
           
@@ -90,14 +91,14 @@ const LandingPage: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-bee-black mb-6">
-              Everything You Need to
+              Everything your academy needs to
               <span className="block text-bee-yellow">
-                Succeed
+                Grow
               </span>
             </h2>
             <p className="text-xl text-bee-grayMuted max-w-3xl mx-auto">
-              MemberFlow provides comprehensive tools to manage every aspect of your martial arts club, 
-              from member registration to advanced analytics.
+              MemberFlow provides comprehensive tools to manage every aspect of your academy, 
+              from member registration, to automation and reporting.
             </p>
           </div>
 
@@ -176,9 +177,9 @@ const LandingPage: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-bee-black mb-6">
-              Loved by Martial Arts
+              Built by practitioners,
               <span className="block text-bee-yellow">
-                Masters Worldwide
+                For practitioners 
               </span>
             </h2>
           </div>
@@ -254,9 +255,9 @@ const LandingPage: React.FC = () => {
       <section className="px-6 py-20 bg-bee-yellow/10">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl font-bold text-bee-black mb-6">
-            Ready to Transform Your
+            Ready to Elevate Your
             <span className="block text-bee-yellow">
-              Martial Arts Club?
+              Martial Arts Academy?
             </span>
           </h2>
           <p className="text-xl text-bee-grayMuted mb-8 leading-relaxed">
@@ -292,7 +293,7 @@ const LandingPage: React.FC = () => {
                 </span>
               </div>
               <p className="text-bee-grayMuted leading-relaxed">
-                The ultimate martial arts club management platform designed to help you build a thriving community.
+                The ultimate member management system for martial artists. A platform designed to help you build a thriving community.
               </p>
             </div>
             
@@ -352,4 +353,28 @@ const LandingPage: React.FC = () => {
   );
 };
 
-export default LandingPage; 
+export default LandingPage;
+
+<style>
+{`
+  .pencil-underline {
+    position: relative;
+    display: inline-block;
+  }
+  .pencil-underline::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0.1em;
+    height: 8px;
+    background: none;
+    pointer-events: none;
+    z-index: 1;
+    width: 100%;
+    background-repeat: no-repeat;
+    background-size: 100% 8px;
+    background-image: url("data:image/svg+xml,%3Csvg width='100%25' height='8' viewBox='0 0 100 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 6 Q 10 2, 18 6 T 34 6 T 50 6 T 66 6 T 82 6 T 98 6' stroke='black' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+  }
+`}
+</style> 
