@@ -230,4 +230,35 @@ button, a {
   transform: scaleX(1.2);
   transform-origin: left;
   margin-left: -0.5em;
+}
+
+/* Custom scrollbar hiding for better tablet UX */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Safari and Chrome */
+}
+
+/* Custom breakpoint for 1023px */
+@media (max-width: 1023px) {
+  .mobile-menu {
+    display: block;
+  }
+  
+  .desktop-nav {
+    display: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .mobile-menu {
+    display: none;
+  }
+  
+  .desktop-nav {
+    display: flex;
+  }
 } 

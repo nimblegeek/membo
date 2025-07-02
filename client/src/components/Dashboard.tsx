@@ -87,15 +87,15 @@ const Dashboard: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Header */}
         <div className="mb-8">
-          <div className="flex items-center space-x-3 mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-3 mb-4">
             <div className="w-12 h-12 bg-bee-yellow rounded-xl flex items-center justify-center shadow-lg">
               <Zap className="w-6 h-6 text-bee-black" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-bee-black">
+              <h1 className="text-2xl sm:text-3xl font-bold text-bee-black">
                 Welcome back, {user?.name}!
               </h1>
-              <p className="text-bee-grayMuted">
+              <p className="text-bee-grayMuted text-sm sm:text-base">
                 Ready to continue your martial arts journey with MemberFlow
               </p>
             </div>
@@ -103,7 +103,7 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
           <StatCard
             title="Classes Attended"
             value={stats.totalClasses}
@@ -131,9 +131,9 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Attendance Overview */}
-        <div className="bg-bee-white rounded-2xl shadow-sm border border-bee-border p-8 mb-10">
-          <h2 className="text-xl font-bold text-bee-black mb-6">Attendance Overview</h2>
-          <ResponsiveContainer width="100%" height={260}>
+        <div className="bg-bee-white rounded-2xl shadow-sm border border-bee-border p-4 sm:p-6 lg:p-8 mb-8 lg:mb-10">
+          <h2 className="text-lg sm:text-xl font-bold text-bee-black mb-4 sm:mb-6">Attendance Overview</h2>
+          <ResponsiveContainer width="100%" height={200} className="sm:h-[260px]">
             <LineChart data={attendanceData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="week" tick={{ fontSize: 14, fill: '#8A8A8A' }} />
@@ -145,48 +145,48 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Class Schedule */}
           <div className="lg:col-span-2">
             <div className="bg-bee-white rounded-2xl shadow-sm border border-bee-border">
-              <div className="p-6 border-b border-bee-border">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-semibold text-bee-black flex items-center">
+              <div className="p-4 sm:p-6 border-b border-bee-border">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
+                  <h2 className="text-lg sm:text-xl font-semibold text-bee-black flex items-center">
                     <Calendar className="w-5 h-5 mr-2 text-bee-yellow" />
                     This Week's Classes
                   </h2>
-                  <button className="text-bee-yellow hover:text-bee-orange text-sm font-medium flex items-center">
+                  <button className="text-bee-yellow hover:text-bee-orange text-sm font-medium flex items-center self-start sm:self-auto">
                     View All
                     <ChevronRight className="w-4 h-4 ml-1" />
                   </button>
                 </div>
               </div>
-              <div className="p-6">
+              <div className="p-4 sm:p-6">
                 <ClassList />
               </div>
             </div>
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* Member of the Month */}
-            <div className="bg-bee-white rounded-2xl shadow-sm border border-bee-border p-6">
+            <div className="bg-bee-white rounded-2xl shadow-sm border border-bee-border p-4 sm:p-6">
               <div className="flex items-center mb-4">
                 <Trophy className="w-5 h-5 mr-2 text-bee-yellow" />
-                <h3 className="text-lg font-semibold text-bee-black">Member of the Month</h3>
+                <h3 className="text-base sm:text-lg font-semibold text-bee-black">Member of the Month</h3>
               </div>
               <div className="text-center">
-                <div className="w-16 h-16 bg-gradient-to-r from-bee-yellow to-bee-orange rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Star className="w-8 h-8 text-bee-white" />
+                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-bee-yellow to-bee-orange rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Star className="w-6 h-6 sm:w-8 sm:h-8 text-bee-white" />
                 </div>
-                <h4 className="font-semibold text-bee-black mb-1">{stats.memberOfMonth}</h4>
-                <p className="text-sm text-bee-grayMuted">Congratulations on your dedication!</p>
+                <h4 className="font-semibold text-bee-black mb-1 text-sm sm:text-base">{stats.memberOfMonth}</h4>
+                <p className="text-xs sm:text-sm text-bee-grayMuted">Congratulations on your dedication!</p>
               </div>
             </div>
 
             {/* Quick Actions */}
-            <div className="bg-bee-white rounded-2xl shadow-sm border border-bee-border p-6">
-              <h3 className="text-lg font-semibold text-bee-black mb-4">Quick Actions</h3>
+            <div className="bg-bee-white rounded-2xl shadow-sm border border-bee-border p-4 sm:p-6">
+              <h3 className="text-base sm:text-lg font-semibold text-bee-black mb-4">Quick Actions</h3>
               <div className="space-y-3">
                 <button className="w-full flex items-center justify-between p-3 text-left bg-bee-yellow/10 hover:bg-bee-yellow/20 rounded-lg transition-colors">
                   <div className="flex items-center">
@@ -213,8 +213,8 @@ const Dashboard: React.FC = () => {
             </div>
 
             {/* Recent Activity */}
-            <div className="bg-bee-white rounded-2xl shadow-sm border border-bee-border p-6">
-              <h3 className="text-lg font-semibold text-bee-black mb-4">Recent Activity</h3>
+            <div className="bg-bee-white rounded-2xl shadow-sm border border-bee-border p-4 sm:p-6">
+              <h3 className="text-base sm:text-lg font-semibold text-bee-black mb-4">Recent Activity</h3>
               <div className="space-y-4">
                 <div className="flex items-start space-x-3">
                   <div className="w-2 h-2 bg-bee-orange rounded-full mt-2"></div>

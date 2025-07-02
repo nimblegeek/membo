@@ -108,15 +108,15 @@ const AdminDashboard: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center space-x-3 mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-3 mb-4">
             <div className="w-12 h-12 bg-bee-yellow rounded-xl flex items-center justify-center shadow-lg">
               <Zap className="w-6 h-6 text-bee-black" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-bee-black">
+              <h1 className="text-2xl sm:text-3xl font-bold text-bee-black">
                 MemberFlow Admin Dashboard
               </h1>
-              <p className="text-bee-grayMuted">
+              <p className="text-bee-grayMuted text-sm sm:text-base">
                 Manage your martial arts club with powerful tools and insights
               </p>
             </div>
@@ -125,7 +125,7 @@ const AdminDashboard: React.FC = () => {
 
         {/* Tab Navigation */}
         <div className="bg-bee-white rounded-xl shadow-sm border border-bee-border p-2 mb-8">
-          <div className="flex space-x-2">
+          <div className="flex space-x-2 overflow-x-auto scrollbar-hide">
             <TabButton
               id="overview"
               label="Overview"
@@ -156,9 +156,9 @@ const AdminDashboard: React.FC = () => {
 
         {/* Tab Content */}
         {activeTab === 'overview' && (
-          <div className="space-y-8">
+          <div className="space-y-6 lg:space-y-8">
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               <StatCard
                 title="Total Members"
                 value={stats.totalMembers}
@@ -189,50 +189,50 @@ const AdminDashboard: React.FC = () => {
             </div>
 
             {/* Main Content Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
               {/* Recent Activity */}
               <div className="lg:col-span-2">
                 <div className="bg-bee-white rounded-xl shadow-sm border border-bee-border">
-                  <div className="p-6 border-b border-bee-border">
-                    <h2 className="text-xl font-semibold text-bee-black">Recent Activity</h2>
+                  <div className="p-4 sm:p-6 border-b border-bee-border">
+                    <h2 className="text-lg sm:text-xl font-semibold text-bee-black">Recent Activity</h2>
                   </div>
-                  <div className="p-6">
+                  <div className="p-4 sm:p-6">
                     <div className="space-y-4">
-                      <div className="flex items-center justify-between p-4 bg-bee-gray rounded-lg">
+                      <div className="flex items-center justify-between p-3 sm:p-4 bg-bee-gray rounded-lg">
                         <div className="flex items-center space-x-3">
                           <div className="w-8 h-8 bg-bee-yellow rounded-full flex items-center justify-center">
                             <Users className="w-4 h-4 text-bee-black" />
                           </div>
                           <div>
-                            <p className="font-medium text-bee-black">New member joined</p>
-                            <p className="text-sm text-bee-grayMuted">John Smith signed up for Karate Basics</p>
+                            <p className="font-medium text-bee-black text-sm sm:text-base">New member joined</p>
+                            <p className="text-xs sm:text-sm text-bee-grayMuted">John Smith signed up for Karate Basics</p>
                           </div>
                         </div>
-                        <span className="text-sm text-bee-grayMuted">2 hours ago</span>
+                        <span className="text-xs sm:text-sm text-bee-grayMuted">2 hours ago</span>
                       </div>
-                      <div className="flex items-center justify-between p-4 bg-bee-gray rounded-lg">
+                      <div className="flex items-center justify-between p-3 sm:p-4 bg-bee-gray rounded-lg">
                         <div className="flex items-center space-x-3">
                           <div className="w-8 h-8 bg-bee-yellow rounded-full flex items-center justify-center">
                             <Calendar className="w-4 h-4 text-bee-black" />
                           </div>
                           <div>
-                            <p className="font-medium text-bee-black">Class completed</p>
-                            <p className="text-sm text-bee-grayMuted">Judo Advanced had 15 attendees</p>
+                            <p className="font-medium text-bee-black text-sm sm:text-base">Class completed</p>
+                            <p className="text-xs sm:text-sm text-bee-grayMuted">Judo Advanced had 15 attendees</p>
                           </div>
                         </div>
-                        <span className="text-sm text-bee-grayMuted">4 hours ago</span>
+                        <span className="text-xs sm:text-sm text-bee-grayMuted">4 hours ago</span>
                       </div>
-                      <div className="flex items-center justify-between p-4 bg-bee-gray rounded-lg">
+                      <div className="flex items-center justify-between p-3 sm:p-4 bg-bee-gray rounded-lg">
                         <div className="flex items-center space-x-3">
                           <div className="w-8 h-8 bg-bee-yellow rounded-full flex items-center justify-center">
                             <Award className="w-4 h-4 text-bee-black" />
                           </div>
                           <div>
-                            <p className="font-medium text-bee-black">Achievement unlocked</p>
-                            <p className="text-sm text-bee-grayMuted">Sarah Johnson reached 30-day streak</p>
+                            <p className="font-medium text-bee-black text-sm sm:text-base">Achievement unlocked</p>
+                            <p className="text-xs sm:text-sm text-bee-grayMuted">Sarah Johnson reached 30-day streak</p>
                           </div>
                         </div>
-                        <span className="text-sm text-bee-grayMuted">1 day ago</span>
+                        <span className="text-xs sm:text-sm text-bee-grayMuted">1 day ago</span>
                       </div>
                     </div>
                   </div>
