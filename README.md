@@ -1,4 +1,4 @@
-# RolVibe - Martial Arts Club Management System
+# MemberFlow - Member Management for martial arts academies
 
 <div align="center">
   <img src="https://img.shields.io/badge/React-18.2.0-blue?style=for-the-badge&logo=react" alt="React" />
