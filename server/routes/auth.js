@@ -8,54 +8,42 @@ const prisma = new PrismaClient();
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-
-    // For development, use mock authentication
-    // In production, this would validate against Auth0 or your auth system
-    if (email === 'admin@rolvibe.com' && password === 'admin123') {
-      const user = await prisma.user.findFirst({
-        where: { email: 'admin@rolvibe.com' }
-      });
-
-      if (!user) {
-        // Create admin user if it doesn't exist
-        const newUser = await prisma.user.create({
-          data: {
-            name: 'Coach Admin',
-            email: 'admin@rolvibe.com',
-            role: 'admin',
-            beltLevel: 'black',
-            status: 'active'
-          }
-        });
-        return res.json({ user: newUser, token: 'mock-admin-token' });
-      }
-
-      return res.json({ user, token: 'mock-admin-token' });
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' });
     }
 
-    if (email === 'member@rolvibe.com' && password === 'member123') {
-      const user = await prisma.user.findFirst({
-        where: { email: 'member@rolvibe.com' }
-      });
-
-      if (!user) {
-        // Create member user if it doesn't exist
-        const newUser = await prisma.user.create({
-          data: {
-            name: 'Demo Member',
-            email: 'member@rolvibe.com',
-            role: 'member',
-            beltLevel: 'white',
-            status: 'active'
-          }
-        });
-        return res.json({ user: newUser, token: 'mock-member-token' });
-      }
-
-      return res.json({ user, token: 'mock-member-token' });
+    // Find user by email
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user || user.role !== 'admin' || !user.passwordHash) {
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    res.status(401).json({ error: 'Invalid credentials' });
+    // Compare password
+    const bcrypt = require('bcryptjs');
+    const isMatch = await bcrypt.compare(password, user.passwordHash);
+    if (!isMatch) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    // Issue JWT
+    const jwt = require('jsonwebtoken');
+    const token = jwt.sign(
+      { userId: user.id, role: user.role, email: user.email },
+      process.env.JWT_SECRET || 'devsecret',
+      { expiresIn: '7d' }
+    );
+
+    // Set HTTP-only cookie
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    });
+
+    // Return user info (omit passwordHash)
+    const { passwordHash, ...userInfo } = user;
+    res.json({ user: userInfo });
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ error: 'Login failed' });
