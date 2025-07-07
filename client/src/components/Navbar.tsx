@@ -167,7 +167,7 @@ const Navbar: React.FC = () => {
                   to="/login" 
                   className="flex items-center h-10 px-4 bg-bee-yellow text-bee-black rounded-lg hover:bg-bee-yellowDeep transition-colors text-sm font-medium"
                 >
-                  Get Started
+                  Get Rollin'
                 </Link>
               </>
             )}
